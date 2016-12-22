@@ -1,0 +1,41 @@
+{
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "indent": [
+      "error",
+      "tab",
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "no-console": [
+      "error",
+    ],
+    "no-ex-assign": [
+      "off"
+    ],
+    "no-extra-boolean-cast": [
+      "off"
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "all",
+        "args": "none",
+        "varsIgnorePattern": "config|_"
+      }
+    ],
+    "semi": [
+      "error",
+      "always"
+    ]
+  }
+}

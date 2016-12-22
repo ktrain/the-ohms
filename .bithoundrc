@@ -1,0 +1,17 @@
+{
+    "ignore": [
+        "test/**",
+        "migrations/**",
+        "scripts/**"
+    ],
+    "dependencies": {
+        "unused-ignores": [
+            "pg",
+            "supertest",
+            "mocha",
+            "eslint",
+            "mocha-junit-reporter",
+            "nodemon"
+        ]
+    }
+}

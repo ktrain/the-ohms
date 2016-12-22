@@ -1,0 +1,6 @@
+{
+	"port": 8001,
+	"logging": {
+		"forceLevel": "error"
+	}
+}
