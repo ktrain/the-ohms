@@ -16,7 +16,7 @@ const config = require('nconf')
 	.file('defaults', { file: `${configPath}/default.json` });
 
 const app = require('src/app');
-const wss = require('src/wss');
+const socket = require('src/socket');
 
 // log http requests
 app.use((req, res, next) => {
@@ -37,6 +37,6 @@ app.use((req, res, next) => {
 const port = process.env.PORT || 8000;
 const httpServer = app.listen(port, () => {
 	// attach ws server
-	wss.attachToHttpServer(httpServer);
+	socket.attachToHttpServer(httpServer);
 	logger.info('Listening on ' + port);
 });
