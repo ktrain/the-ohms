@@ -21,6 +21,7 @@ describe('PlayerDB', () => {
 		}).then((player) => {
 			should.exist(player);
 			player.should.have.property('id').that.is.a('string');
+			player.should.have.property('name').that.is.a('string');
 		});
 	});
 

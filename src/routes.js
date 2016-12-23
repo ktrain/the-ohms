@@ -2,8 +2,7 @@
 
 const router = require('express').Router();
 
-const gamesRouter = require('./routers/games.router.js');
-
-router.use('/games', gamesRouter);
+router.use('/players', require('./routers/players.router.js'));
+router.use('/games',   require('./routers/games.router.js'));
 
 module.exports = router;
