@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const uuid = require('uuid');
+const generateName = require('adjective-adjective-animal');
 
 const Cache = require('src/util/cache.js');
 
@@ -11,17 +12,25 @@ const GameDB = {
 		return `game-${id}`;
 	},
 
-	prepareNewData: (data) => {
-		data.id = uuid.v4();
-		return _.pick(data, ['id', 'name']);
+	prepareNewData: (data = {}) => {
+		return generateName({
+			adjectives: 1,
+			format: 'lower',
+		}).then((name) => {
+			data.id = uuid.v4();
+			data.name = name;
+			return _.pick(data, ['id', 'name']);
+		});
 	},
 
-	create: (data) => {
-		const newGameData = GameDB.prepareNewData(_.clone(data));
-		const key = GameDB.prepareKey(newGameData.id);
-		return Cache.put(key, newGameData)
-			.then(() => {
-				return newGameData;
+	create: (data = {}) => {
+		return GameDB.prepareNewData(_.clone(data))
+			.then((newGameData) => {
+				const key = GameDB.prepareKey(newGameData.id);
+				return Cache.put(key, newGameData)
+					.then(() => {
+						return newGameData;
+					});
 			});
 	},
 
