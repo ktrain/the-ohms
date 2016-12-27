@@ -1,5 +1,8 @@
 'use strict';
 
+const GameHandler = require('./game.handler.js');
+
+
 const Handler = {
 
 	handleMessage: (message) => {
@@ -8,21 +11,37 @@ const Handler = {
 			try {
 				parsedMessage = JSON.parse(message);
 			} catch (err) {
-				return reject(new Error(`Could not JSON.parse incoming ws message: ${message}`));
+				return reject(new Error(`Could not JSON.parse incoming message: ${message}`));
 			}
 
 			if (!parsedMessage.type) {
-				return reject(new Error(`Incoming ws message has no type: ${message}`));
+				return reject(new Error(`Incoming message has no type: ${message}`));
+			}
+
+			if (!parsedMessage.playerId) {
+				return reject(new Error(`Incoming message has no playerId: ${message}`));
 			}
 
 			switch (parsedMessage.type) {
-				case 'start':
+				case 'joinGame':
+					return GameHandler.joinGame(parsedMessage);
+				case 'startGame':
+					return GameHandler.startGame(parsedMessage);
+				case 'deleteGame':
+					return GameHandler.deleteGame(parsedMessage);
+				case 'selectTeam':
 					break;
-				default:
-					return reject(new Error(`Incoming message has unknown type: ${message}`));
+				case 'approveTeam':
+					break;
+				case 'rejectTeam':
+					break;
+				case 'succeedMisson':
+					break;
+				case 'failMission':
+					break;
 			}
 
-			return resolve();
+			return reject(new Error(`Incoming message has unknown type: ${message}`));
 		});
 	},
 
