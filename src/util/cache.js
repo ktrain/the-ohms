@@ -13,15 +13,21 @@ if (!redisUrl && !cacheConfig) {
             + 'Please check `config.cache`, or set `REDIS_URL` env var.');
 }
 
-let redisClient;
-if (redisUrl) {
-    redisClient = redis.createClient(redisUrl);
-} else {
-    if (!cacheConfig.password) {
-        delete cacheConfig.password;
-    }
-    redisClient = redis.createClient(cacheConfig);
-}
+const createClient = () => {
+	let client;
+	if (redisUrl) {
+		client = redis.createClient(redisUrl);
+	} else {
+		if (!cacheConfig.password) {
+			delete cacheConfig.password;
+		}
+		client = redis.createClient(cacheConfig);
+	}
+	return client;
+};
+
+let queryClient = createClient();
+let subClient = queryClient.duplicate();
 
 const attemptJsonParse = (jsonMaybe) => {
     let val = jsonMaybe;
@@ -52,7 +58,7 @@ const Cache = {
         return new Promise((resolve, reject) => {
             const val = Cache.prepValue(value);
 
-            redisClient.set(key, val, (err, res) => {
+            queryClient.set(key, val, (err, res) => {
                 if (err) {
                     return reject(new Error(err));
                 }
@@ -69,7 +75,7 @@ const Cache = {
                 charset: 'alphanumeric',
             });
 
-            redisClient.hset(hashKey, hashField, val, (err, success) => {
+            queryClient.hset(hashKey, hashField, val, (err, success) => {
                 if (err) {
                     return reject(new Error(err));
                 }
@@ -80,7 +86,7 @@ const Cache = {
 
     get: (key) => {
         return new Promise((resolve, reject) => {
-            redisClient.get(key, (err, res) => {
+            queryClient.get(key, (err, res) => {
                 if (err) {
                     return reject(new Error(err));
                 }
@@ -92,7 +98,7 @@ const Cache = {
 
     hashGet: (hashKey) => {
         return new Promise((resolve, reject) => {
-            redisClient.hgetall(hashKey, (err, res) => {
+            queryClient.hgetall(hashKey, (err, res) => {
                 if (err) {
                     return reject(new Error(err));
                 }
@@ -104,7 +110,7 @@ const Cache = {
     // promise gets resolved with the number of items deleted
     del: (key) => {
         return new Promise((resolve, reject) => {
-            redisClient.del(key, (err, res) => {
+            queryClient.del(key, (err, res) => {
                 if (err) {
                     return reject(new Error(err));
                 }
@@ -115,7 +121,7 @@ const Cache = {
 
     hashDel: (hashKey) => {
         return new Promise((resolve, reject) => {
-            redisClient.hdel(hashKey, (err, res) => {
+            queryClient.hdel(hashKey, (err, res) => {
                 if (err) {
                     return reject(new Error(err));
                 }
@@ -127,7 +133,7 @@ const Cache = {
     // atomically get and delete the data at `key`
     getAndDel: (key) => {
         return new Promise((resolve, reject) => {
-            redisClient.multi()
+            queryClient.multi()
                 .get(key)
                 .del(key)
                 .exec((err, replies) => {
@@ -142,7 +148,7 @@ const Cache = {
 
     hashGetAndDel: (hashKey) => {
         return new Promise((resolve, reject) => {
-            redisClient.multi()
+            queryClient.multi()
                 .hgetall(hashKey)
                 .del(hashKey)
                 .exec((err, replies) => {
@@ -155,8 +161,12 @@ const Cache = {
         });
     },
 
+	getSubscriptionConnection: () => {
+		return subClient;
+	},
+
     getRawClientYesIKnowWhatImDoing: () => {
-        return redisClient;
+        return queryClient;
     },
 };
 
