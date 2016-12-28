@@ -17,6 +17,7 @@ const config = require('nconf')
 
 const app = require('src/app');
 const socket = require('src/socket');
+const events = require('src/events');
 
 // log http requests
 app.use((req, res, next) => {

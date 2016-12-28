@@ -1,5 +1,7 @@
 'use strict';
 
+const _ = require('lodash');
+
 const GameSetup = require('src/data/game.setup.js');
 const GameDB = require('src/data/game.data.js');
 
@@ -47,6 +49,8 @@ const GameModel = {
 				}
 
 				state.players.push(player);
+
+				this.save();
 				return this;
 			},
 

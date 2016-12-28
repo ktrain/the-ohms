@@ -26,19 +26,16 @@ const GameDB = {
 	create: (data = {}) => {
 		return GameDB.prepareNewData(_.clone(data))
 			.then((newGameData) => {
-				const key = GameDB.prepareKey(newGameData.id);
-				return Cache.put(key, newGameData)
-					.then(() => {
-						return newGameData;
-					});
+				return GameDB.save(newGameData);
 			});
 	},
 
-	save: (game) => {
-		if (!game.id) {
+	save: (gameData) => {
+		if (!gameData.id) {
 			return Promise.reject(new Error('Game to save has no ID.'));
 		}
-		return Cache.put(game.id, game);
+		const key = GameDB.prepareKey(gameData.id);
+		return Cache.put(key, gameData);
 	},
 
 	get: (id) => {
