@@ -13,10 +13,10 @@ const GameHandler = {
 			return Promise.reject(new Error('Message requires `payload.gameId`.'));
 		}
 
-		return GamesService.joinGame(message.playerId, message.payload.gameId);
+		return GamesService.addPlayerToGame(message.playerId, message.payload.gameId);
 	},
 
-	deleteGame: (playerId, payload) => {
+	deleteGame: (message) => {
 		if (!_.isObject(message.payload)) {
 			return Promise.reject(new Error('Message requires `payload`, which should be an object.'));
 		}
@@ -24,9 +24,10 @@ const GameHandler = {
 			return Promise.reject(new Error('Message requires `payload.gameId`.'));
 		}
 
+		return GamesService.deleteGame(message.payload.gameId);
 	},
 
-	startGame: (playerId, payload) => {
+	startGame: (message) => {
 		if (!_.isObject(message.payload)) {
 			return Promise.reject(new Error('Message requires `payload`, which should be an object.'));
 		}
@@ -34,6 +35,7 @@ const GameHandler = {
 			return Promise.reject(new Error('Message requires `payload.gameId`.'));
 		}
 
+		return GamesService.startGame(message.payload.gameId);
 	},
 
 };

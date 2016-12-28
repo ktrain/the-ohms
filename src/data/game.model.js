@@ -1,29 +1,76 @@
 'use strict';
 
-const PlayersService = require('src/services/players.service.js');
+const GameSetup = require('src/data/game.setup.js');
+const GameDB = require('src/data/game.data.js');
 
-module.exports = {
-	initialize: (data) => {
+
+const GameModel = {
+	initialize: function(data) {
 		const state = _.defaults(_.cloneDeep(data), {
 			name: null,
 			players: [],
+			spyIds: [],
+			numSpies: 0,
 			state: 'waiting for players',
 			rounds: [],
-			currentRound: {},
+			currentRoundIndex: 0,
 			numRejections: 0,
 			numSuccesses: 0,
 			numFails: 0,
 		});
 
 		return {
-			addPlayer: (playerId) => {
-				const player = _.find(state.players, { id: playerId });
-				if (player) {
+
+			getData: () => {
+				return state;
+			},
+
+			save: () => {
+				return GameDB.save(state);
+			},
+
+			addPlayer: (player) => {
+				if (!state.state === 'waiting for players') {
+					// game has started already
 					return this;
 				}
-				state.players.push(playerId);
+
+				if (state.players.length >= GameSetup.getMaxNumPlayers()) {
+					// game is full
+					return this;
+				}
+
+				const playerAlreadyInGame = !!_.find(state.players, { id: player.id });
+				if (playerAlreadyInGame) {
+					// player is already in this game
+					return this;
+				}
+
+				state.players.push(player);
 				return this;
 			},
+
+			start: () => {
+				if (!state.state === 'waiting for players') {
+					// game has started already
+					return this;
+				}
+
+				state.state = 'selecting team';
+				this.save();
+
+				const setup = GameSetup.getGameSetupByNumPlayers(state.players.length);
+
+				state.numSpies = setup.numSpies;
+				state.rounds = setup.rounds;
+				state.currentRoundIndex = 0;
+
+				this.save();
+				return this;
+			},
+
 		};
 	},
 };
+
+module.exports = GameModel;

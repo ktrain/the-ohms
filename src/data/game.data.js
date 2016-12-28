@@ -34,9 +34,21 @@ const GameDB = {
 			});
 	},
 
+	save: (game) => {
+		if (!game.id) {
+			return Promise.reject(new Error('Game to save has no ID.'));
+		}
+		return Cache.put(game.id, game);
+	},
+
 	get: (id) => {
 		const key = GameDB.prepareKey(id);
 		return Cache.get(key);
+	},
+
+	destroy: (id) => {
+		const key = GameDB.prepareKey(id);
+		return Cache.del(key);
 	},
 
 };
