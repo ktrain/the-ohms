@@ -62,7 +62,7 @@ const Cache = {
                 if (err) {
                     return reject(new Error(err));
                 }
-                resolve(res);
+                resolve(value);
             });
         });
     },
