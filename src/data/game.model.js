@@ -22,7 +22,7 @@ const GameModel = {
 			numFails: 0,
 		});
 
-		return {
+		const self = {
 
 			getData: () => {
 				return state;
@@ -32,8 +32,7 @@ const GameModel = {
 				EventEmitter.emit('game|save', state);
 				return GameDB.save(state)
 					.then(() => {
-						console.log('this', this);
-						return this;
+						return self;
 					});
 			},
 
@@ -45,30 +44,30 @@ const GameModel = {
 			addPlayer: (player) => {
 				if (!state.state === 'waiting for players') {
 					// game has started already
-					return this;
+					return self;
 				}
 
 				if (state.players.length >= GameSetup.getMaxNumPlayers()) {
 					// game is full
-					return this;
+					return self;
 				}
 
 				const playerAlreadyInGame = !!_.find(state.players, { id: player.id });
 				if (playerAlreadyInGame) {
 					// player is already in this game
-					return this;
+					return self;
 				}
 
 				state.players.push(player);
 
-				this.save();
-				return this;
+				self.save();
+				return self;
 			},
 
 			start: () => {
 				if (!state.state === 'waiting for players') {
 					// game has started already
-					return this;
+					return self;
 				}
 
 				state.state = 'selecting team';
@@ -78,11 +77,13 @@ const GameModel = {
 				state.rounds = setup.rounds;
 				state.currentRoundIndex = 0;
 
-				this.save();
-				return this;
+				self.save();
+				return self;
 			},
 
 		};
+
+		return self;
 	},
 };
 
