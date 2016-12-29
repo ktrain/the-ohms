@@ -7,7 +7,11 @@ const EventEmitter = require('src/util/eventEmitter.js');
 const Handler = {
 
 	handleNewConnection: (socket) => {
-		const playerId = socket.request.query.playerId;
+		const playerId = socket.request._query.playerId;
+		if (!playerId) {
+			throw new Error('Socket connection requires query option `playerId`.');
+		}
+
 		// bind outgoing message handler
 		EventEmitter.on(`clientUpdate|${playerId}`, (event) => {
 			socket.emit(event.type, event);

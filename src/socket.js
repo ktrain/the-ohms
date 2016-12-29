@@ -15,7 +15,11 @@ module.exports = {
 		io.use((socket, next) => {
 			logger.debug('handling new connection');
 			// bind outgoing message handler
-			Handler.handleNewConnection(socket)
+			try {
+				Handler.handleNewConnection(socket);
+			} catch (e) {
+				return next(e);
+			}
 
 			// bind incoming message handler
 			socket.on('message', (message) => {
