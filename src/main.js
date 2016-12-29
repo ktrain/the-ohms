@@ -19,6 +19,8 @@ const app = require('src/app');
 const socket = require('src/socket');
 const events = require('src/events');
 
+events.setUpSubscriptions();
+
 // log http requests
 app.use((req, res, next) => {
 	logger.debug('---------------------------');

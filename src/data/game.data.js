@@ -23,11 +23,8 @@ const GameDB = {
 		});
 	},
 
-	create: (data = {}) => {
-		return GameDB.prepareNewData(_.clone(data))
-			.then((newGameData) => {
-				return GameDB.save(newGameData);
-			});
+	build: (data = {}) => {
+		return GameDB.prepareNewData(_.clone(data));
 	},
 
 	save: (gameData) => {

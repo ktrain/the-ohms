@@ -1,9 +1,18 @@
 'use strict';
 
 const GameHandler = require('./game.handler.js');
+const EventEmitter = require('src/util/eventEmitter.js');
 
 
 const Handler = {
+
+	handleNewConnection: (socket) => {
+		const playerId = socket.request.query.playerId;
+		// bind outgoing message handler
+		EventEmitter.on(`clientUpdate|${playerId}`, (event) => {
+			socket.emit(event.type, event);
+		});
+	},
 
 	handleMessage: (message) => {
 		return new Promise((resolve, reject) => {
@@ -12,6 +21,10 @@ const Handler = {
 				parsedMessage = JSON.parse(message);
 			} catch (err) {
 				return reject(new Error(`Could not JSON.parse incoming message: ${message}`));
+			}
+
+			if (parsedMessage.version !== 1) {
+				return reject(new Error(`Message must specify a version. Supported version: 1.`));
 			}
 
 			if (!parsedMessage.type) {

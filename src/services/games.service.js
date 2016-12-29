@@ -7,9 +7,9 @@ const PlayersService = require('src/services/players.service.js');
 const GamesService = {
 
 	createGame: () => {
-		return GamesDB.create()
+		return GamesDB.build()
 			.then((gameData) => {
-				return GameModel.initialize(gameData);
+				return GameModel.initialize(gameData).save();
 			});
 	},
 
@@ -39,8 +39,10 @@ const GamesService = {
 	},
 
 	deleteGame: (gameId) => {
-		// TODO: update clients with a gameDeleted message
-		return GamesDB.destroy(gameId);
+		return GamesService.getGame(gameId)
+			.then((game) => {
+				return game.delete();
+			});
 	},
 
 	startGame: (gameId) => {

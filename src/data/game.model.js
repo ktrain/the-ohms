@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 
+const EventEmitter = require('src/util/eventEmitter.js');
 const GameSetup = require('src/data/game.setup.js');
 const GameDB = require('src/data/game.data.js');
 
@@ -28,7 +29,17 @@ const GameModel = {
 			},
 
 			save: () => {
-				return GameDB.save(state);
+				EventEmitter.emit('game|save', state);
+				return GameDB.save(state)
+					.then(() => {
+						console.log('this', this);
+						return this;
+					});
+			},
+
+			delete: () => {
+				EventEmitter.emit('game|delete', state);
+				return GameDB.destroy(state.id);
 			},
 
 			addPlayer: (player) => {
@@ -61,10 +72,8 @@ const GameModel = {
 				}
 
 				state.state = 'selecting team';
-				this.save();
 
 				const setup = GameSetup.getGameSetupByNumPlayers(state.players.length);
-
 				state.numSpies = setup.numSpies;
 				state.rounds = setup.rounds;
 				state.currentRoundIndex = 0;

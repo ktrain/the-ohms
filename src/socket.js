@@ -4,23 +4,26 @@ const _ = require('lodash');
 const logger = require('src/util/logger.js')('socket');
 const SocketIO = require('socket.io');
 
-const handler = require('./socket/handler.js');
-
-const createWebSocketServer = (httpServer) => {
-	const io = SocketIO(httpServer);
-	logger.info('Socket.io attached');
-
-	io.on('connection', (socket) => {
-		logger.debug('new socket connection');
-		socket.on('message', (message) => {
-			logger.debug('incoming message:', message);
-			handler.handleMessage(message);
-		});
-	});
-};
+const EventEmitter = require('src/util/eventEmitter.js');
+const ClientUpdater = require('./socket/clientUpdater.js');
+const Handler = require('./socket/handler.js');
 
 module.exports = {
 	attachToHttpServer: (httpServer) => {
-		return createWebSocketServer(httpServer);
+		const io = SocketIO(httpServer);
+
+		io.use((socket, next) => {
+			logger.debug('handling new connection');
+			// bind outgoing message handler
+			Handler.handleNewConnection(socket)
+
+			// bind incoming message handler
+			socket.on('message', (message) => {
+				logger.debug('incoming message:', message);
+				Handler.handleMessage(message);
+			});
+			next();
+		});
+		logger.info('Socket.io attached');
 	},
 };
