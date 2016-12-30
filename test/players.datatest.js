@@ -1,7 +1,7 @@
 'use strict';
 
 // always require the init file
-const testing = require('../test.init.js');
+const testing = require('./test.init.js');
 const should = testing.should;
 
 const randomstring = require('randomstring');

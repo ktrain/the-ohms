@@ -1,7 +1,7 @@
 'use strict';
 
 // always require the init file
-const testing = require('../test.init.js');
+const testing = require('./test.init.js');
 const request = require('supertest-as-promised');
 
 const app = require('src/app');
