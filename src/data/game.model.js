@@ -42,6 +42,10 @@ const GameModel = {
 			},
 
 			addPlayer: (player) => {
+				if (!_.isObject(player)) {
+					throw new Error(`Player must be an object. Received ${player}`);
+				}
+
 				if (!state.state === 'waiting for players') {
 					// game has started already
 					return self;
@@ -68,6 +72,10 @@ const GameModel = {
 				if (!state.state === 'waiting for players') {
 					// game has started already
 					return self;
+				}
+
+				if (state.players.length < GameSetup.getMinNumPlayers()) {
+					throw new Error(`Cannot start without at least ${GameSetup.getMinNumPlayers()} players.`);
 				}
 
 				state.state = 'selecting team';

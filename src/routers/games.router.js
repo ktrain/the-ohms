@@ -7,7 +7,6 @@ const router = require('express').Router();
 router.post('/', (req, res, next) => {
 	GamesService.createGame(req.body)
 		.then((game) => {
-			console.log(game);
 			res.status(200).send({
 				game: game.getData(),
 			});

@@ -1,5 +1,7 @@
 'use strict';
 
+const logger = require('src/util/logger.js')('socketEvent');
+
 const GameHandler = require('./game.handler.js');
 const EventEmitter = require('src/util/eventEmitter.js');
 
@@ -13,7 +15,10 @@ const Handler = {
 		}
 
 		// bind outgoing message handler
-		EventEmitter.on(`clientUpdate|${playerId}`, (event) => {
+		const clientUpdateEventName = `clientUpdate|${playerId}`;
+		logger.info('Binding client update listener', clientUpdateEventName);
+		EventEmitter.on(clientUpdateEventName, (event) => {
+			logger.debug('clientUpdate event', event);
 			socket.emit(event.type, event);
 		});
 	},

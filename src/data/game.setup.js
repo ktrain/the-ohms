@@ -1,6 +1,7 @@
 'use strict';
 
 const GameSetup = {
+	getMinNumPlayers: () => { return 5; },
 	getMaxNumPlayers: () => { return 10; },
 	getGameSetupByNumPlayers: (numPlayers) => {
 		return {
