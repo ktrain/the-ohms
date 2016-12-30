@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 
+const logger = require('src/util/logger.js')('gameModel');
 const EventEmitter = require('src/util/eventEmitter.js');
 const GameSetup = require('src/data/game.setup.js');
 const GameDB = require('src/data/game.data.js');
@@ -56,9 +57,8 @@ const GameModel = {
 					return self;
 				}
 
-				const playerAlreadyInGame = !!_.find(state.players, { id: player.id });
+				const playerAlreadyInGame = self.hasPlayerId(player.id);
 				if (playerAlreadyInGame) {
-					// player is already in this game
 					return self;
 				}
 
@@ -66,6 +66,11 @@ const GameModel = {
 
 				self.save();
 				return self;
+			},
+
+			hasPlayerId: (playerId) => {
+				logger.debug(playerId, JSON.stringify(state.players));
+				return !!_.find(state.players, (player) => { return player.id === playerId; });
 			},
 
 			start: () => {

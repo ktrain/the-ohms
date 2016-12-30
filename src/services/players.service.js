@@ -6,6 +6,9 @@ const PlayersService = {
 	createPlayer: (data) => {
 		return PlayersDB.create(data);
 	},
+	getPlayer: (playerId) => {
+		return PlayersDB.get(playerId);
+	},
 };
 
 module.exports = PlayersService;

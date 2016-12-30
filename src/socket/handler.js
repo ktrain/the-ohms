@@ -3,39 +3,12 @@
 const logger = require('src/util/logger.js')('socketEvent');
 
 const GameHandler = require('./game.handler.js');
-const EventEmitter = require('src/util/eventEmitter.js');
 
 
 const Handler = {
 
-	handleNewConnection: (socket) => {
-		const playerId = socket.request._query.playerId;
-		if (!playerId) {
-			throw new Error('Socket connection requires query option `playerId`.');
-		}
-
-		// bind outgoing message handler
-		const clientUpdateEventName = `clientUpdate|${playerId}`;
-		logger.info('Binding client update listener', clientUpdateEventName);
-		EventEmitter.on(clientUpdateEventName, (event) => {
-			logger.debug('clientUpdate event', event);
-			socket.emit(event.type, event);
-		});
-	},
-
-	handleMessage: (message) => {
+	handleMessage: (parsedMessage) => {
 		return new Promise((resolve, reject) => {
-			let parsedMessage;
-			try {
-				parsedMessage = JSON.parse(message);
-			} catch (err) {
-				return reject(new Error(`Could not JSON.parse incoming message: ${message}`));
-			}
-
-			if (parsedMessage.version !== 1) {
-				return reject(new Error(`Message must specify a version. Supported version: 1.`));
-			}
-
 			if (!parsedMessage.type) {
 				return reject(new Error(`Incoming message has no type: ${message}`));
 			}

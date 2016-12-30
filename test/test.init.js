@@ -17,7 +17,20 @@ const config = require('nconf')
 // other libs
 const should = require('chai').use(require('chai-as-promised')).should();
 
+const Cache = require('src/util/cache.js');
+
 module.exports = {
 	config: config,
 	should: should,
+	clearCache: () => {
+		return new Promise((resolve, reject) => {
+			Cache.getRawClientYesIKnowWhatImDoing()
+				.flushdb((err) => {
+					if (err) {
+						return reject(new Error(err));
+					}
+					resolve();
+				});
+		});
+	},
 };
