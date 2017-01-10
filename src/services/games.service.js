@@ -13,6 +13,10 @@ const GamesService = {
 		return GameDB.get(gameId);
 	},
 
+	getAllGames: () => {
+		return GameDB.getAll();
+	},
+
 	addPlayerToGame: (playerId, gameId) => {
 		return PlayersService.getPlayer(playerId).then((player) => {
 			if (!player) {

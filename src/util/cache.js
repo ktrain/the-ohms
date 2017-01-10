@@ -186,6 +186,31 @@ const Cache = {
 		return redisLock.lock(lockKey, config.get('cache:lockTTLms'));
 	},
 
+	keys: (pattern) => {
+		return new Promise((resolve, reject) => {
+			queryClient.keys(pattern, (err, res) => {
+				if (err) {
+					return reject(new Error(err));
+				}
+				resolve(res);
+			});
+		});
+	},
+
+	getAll: (keys) => {
+		if (_.isEmpty(keys)) {
+			return Promise.resolve([]);
+		}
+		return new Promise((resolve, reject) => {
+			queryClient.mget(keys, (err, res) => {
+				if (err) {
+					return reject(new Error(err));
+				}
+				resolve(_.map(res, attemptJsonParse));
+			});
+		});
+	},
+
 	getSubscriptionConnection: () => {
 		return subClient;
 	},

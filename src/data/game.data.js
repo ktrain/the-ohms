@@ -16,6 +16,10 @@ const GameDB = {
 		return `game-${id}`;
 	},
 
+	getKeyPattern: () => {
+		return 'game-*';
+	},
+
 	prepareNewData: () => {
 		return generateName({
 			adjectives: 1,
@@ -56,6 +60,14 @@ const GameDB = {
 	get: (id) => {
 		const key = GameDB.prepareKey(id);
 		return Cache.get(key);
+	},
+
+	getAll: () => {
+		return Cache.keys(GameDB.getKeyPattern())
+			.then((keys) => {
+				logger.debug('keys', keys);
+				return Cache.getAll(keys);
+			});
 	},
 
 	destroy: (id) => {

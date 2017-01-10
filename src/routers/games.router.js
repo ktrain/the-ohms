@@ -13,4 +13,14 @@ router.post('/', (req, res, next) => {
 		});
 });
 
+router.get('/', (req, res, next) => {
+	GamesService.getAllGames()
+		.then((games) => {
+			res.status(200).send({
+				list: games,
+				count: games.length,
+			});
+		});
+});
+
 module.exports = router;
