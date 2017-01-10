@@ -34,18 +34,7 @@ const GameHandler = {
 			return Promise.reject(new Error('Message requires `payload.gameId`.'));
 		}
 
-		const gameId = message.payload.gameId;
-
-		return GamesService.getGame(gameId)
-			.then((game) => {
-				if (!game) {
-					throw new Error(`Invalid game ID ${gameId}`);
-				}
-				if (!game.hasPlayerId(message.playerId)) {
-					throw new Error(`Player is not in game ${gameId}.`);
-				}
-				return game.start();
-			});
+		return GamesService.startGame(message.payload.gameId, message.playerId);
 	},
 
 };

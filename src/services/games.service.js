@@ -1,40 +1,24 @@
 'use strict';
 
-const GamesDB = require('src/data/game.data.js');
-const GameModel = require('src/data/game.model.js');
+const GameDB = require('src/data/game.data.js');
 const PlayersService = require('src/services/players.service.js');
 
 const GamesService = {
 
 	createGame: () => {
-		return GamesDB.build()
-			.then((gameData) => {
-				return GameModel.initialize(gameData).save();
-			});
+		return GameDB.create();
 	},
 
 	getGame: (gameId) => {
-		return GamesDB.get(gameId)
-			.then((gameData) => {
-				if (!gameData) {
-					return null;
-				}
-				return GameModel.initialize(gameData);
-			});
+		return GameDB.get(gameId);
 	},
 
 	addPlayerToGame: (playerId, gameId) => {
-		return Promise.all([
-			GamesService.getGame(gameId),
-			PlayersService.getPlayer(playerId),
-		]).then(([game, player]) => {
-			if (!game) {
-				throw new Error(`Game does not exist (ID ${gameId})`);
-			}
+		return PlayersService.getPlayer(playerId).then((player) => {
 			if (!player) {
 				throw new Error(`Player does not exist (ID ${playerId})`);
 			}
-			return game.addPlayer(player);
+			return GameDB.addPlayer(gameId, player);
 		});
 	},
 
@@ -45,11 +29,12 @@ const GamesService = {
 			});
 	},
 
-	startGame: (gameId) => {
-		return GamesService.getGame(gameId)
-			.then((game) => {
-				return game.start();
-			});
+	checkGameHasPlayerId: (game, playerId) => {
+		return GameDB.hasPlayer(game, playerId);
+	},
+
+	startGame: (gameId, playerId) => {
+		return GameDB.startGame(gameId, playerId);
 	},
 
 };

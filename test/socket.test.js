@@ -18,7 +18,9 @@ const Events = require('src/events.js');
 const port = testing.config.get('port');
 
 
-describe('WebSocket server', () => {
+describe('WebSocket server', function() {
+	this.timeout(5000);
+	this.slow(1500);
 
 	const players = [];
 	let clients;
@@ -79,7 +81,7 @@ describe('WebSocket server', () => {
 				should.exist(event);
 				event.should.have.property('type').that.equals('clientUpdate');
 				event.should.have.property('payload').that.is.an('object');
-				event.payload.should.have.property('id').that.equals(game.getData().id);
+				event.payload.should.have.property('id').that.equals(game.id);
 				events[i] = event;
 				if (_.every(events, (event) => !!event)) {
 					done();
@@ -96,7 +98,7 @@ describe('WebSocket server', () => {
 						playerId: players[i].id,
 						type: 'joinGame',
 						payload: {
-							gameId: game.getData().id,
+							gameId: game.id,
 						},
 					}));
 				});
@@ -111,7 +113,7 @@ describe('WebSocket server', () => {
 				should.exist(event);
 				event.should.have.property('type').that.equals('clientUpdate');
 				event.should.have.property('payload').that.is.an('object');
-				event.payload.should.have.property('id').that.equals(game.getData().id);
+				event.payload.should.have.property('id').that.equals(game.id);
 				if (event.payload.state === 'selecting team') {
 					events[i] = event;
 					if (_.every(events, (event) => !!event)) {
@@ -129,18 +131,20 @@ describe('WebSocket server', () => {
 						playerId: players[i].id,
 						type: 'joinGame',
 						payload: {
-							gameId: game.getData().id,
+							gameId: game.id,
 						},
 					}));
 				});
-				clients[0].emit('message', JSON.stringify({
-					version: 1,
-					playerId: players[0].id,
-					type: 'startGame',
-					payload: {
-						gameId: game.getData().id,
-					},
-				}));
+				setTimeout(() => {
+					clients[0].emit('message', JSON.stringify({
+						version: 1,
+						playerId: players[0].id,
+						type: 'startGame',
+						payload: {
+							gameId: game.id,
+						},
+					}));
+				}, 1000);
 			});
 	});
 

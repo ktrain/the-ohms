@@ -4,6 +4,7 @@ const _      = require('lodash');
 const config = require('nconf');
 const randomstring = require('randomstring');
 const redis = require('redis');
+const Redlock = require('redlock');
 
 const redisUrl = config.get('redis_url');
 const cacheConfig = config.get('cache');
@@ -14,6 +15,7 @@ if (!redisUrl && !cacheConfig) {
 }
 
 const createClient = () => {
+	return redis.createClient();
 	let client;
 	if (redisUrl) {
 		client = redis.createClient(redisUrl);
@@ -28,6 +30,20 @@ const createClient = () => {
 
 let queryClient = createClient();
 let subClient = queryClient.duplicate();
+
+const redisLock = new Redlock(
+	// one client per redis node
+	[queryClient],
+	{
+		driftFactor: config.get('cache:driftFactor'),
+		retryCount: config.get('cache:retryCount'),
+		retryDelay: config.get('cache:retryDelay'),
+	}
+);
+
+redisLock.on('clientError', (err) => {
+	logger.err('LockError', err);
+});
 
 const attemptJsonParse = (jsonMaybe) => {
     let val = jsonMaybe;
@@ -136,11 +152,10 @@ const Cache = {
             queryClient.multi()
                 .get(key)
                 .del(key)
-                .exec((err, replies) => {
+                .exec((err, [getResult, delResult]) => {
                     if (err) {
                         return reject(new Error(err));
                     }
-                    const getResult = replies[0];
                     resolve(attemptJsonParse(getResult));
                 });
         });
@@ -160,6 +175,15 @@ const Cache = {
                 });
         });
     },
+
+	prepareLockKey: (key) => {
+		return `lock-${key}`;
+	},
+
+	acquireLock: (key) => {
+		const lockKey = Cache.prepareLockKey(key);
+		return redisLock.lock(lockKey, config.get('cache:lockTTLms'));
+	},
 
 	getSubscriptionConnection: () => {
 		return subClient;

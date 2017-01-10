@@ -24,7 +24,7 @@ module.exports = {
 			const clientUpdateEventName = `clientUpdate|${playerId}`;
 			logger.info('Binding client update listener', clientUpdateEventName);
 			EventEmitter.on(clientUpdateEventName, (event) => {
-				logger.debug('clientUpdate event', JSON.stringify(event, null, '  '));
+				logger.trace('clientUpdate event', JSON.stringify(event, null, '  '));
 				socket.emit(event.type, event);
 			});
 
@@ -46,6 +46,7 @@ module.exports = {
 				Handler.handleMessage(parsedMessage)
 					.catch((e) => {
 						logger.error(e);
+						socket.emit('messageError', e);
 					});
 			});
 
