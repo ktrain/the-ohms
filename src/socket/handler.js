@@ -1,7 +1,5 @@
 'use strict';
 
-const logger = require('src/util/logger.js')('socketEvent');
-
 const GameHandler = require('./game.handler.js');
 
 
@@ -10,11 +8,11 @@ const Handler = {
 	handleMessage: (parsedMessage) => {
 		return new Promise((resolve, reject) => {
 			if (!parsedMessage.type) {
-				return reject(new Error(`Incoming message has no type: ${message}`));
+				return reject(new Error(`Incoming message has no type: ${parsedMessage}`));
 			}
 
 			if (!parsedMessage.playerId) {
-				return reject(new Error(`Incoming message has no playerId: ${message}`));
+				return reject(new Error(`Incoming message has no playerId: ${parsedMessage}`));
 			}
 
 			switch (parsedMessage.type) {
@@ -36,7 +34,7 @@ const Handler = {
 					break;
 			}
 
-			return reject(new Error(`Incoming message has unknown type: ${message}`));
+			return reject(new Error(`Incoming message has unknown type: ${parsedMessage}`));
 		});
 	},
 

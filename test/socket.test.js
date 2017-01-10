@@ -19,7 +19,6 @@ const port = testing.config.get('port');
 
 
 describe('WebSocket server', function() {
-	this.timeout(5000);
 	this.slow(1500);
 
 	const players = [];

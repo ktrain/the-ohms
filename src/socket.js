@@ -5,7 +5,6 @@ const logger = require('src/util/logger.js')('socket');
 const SocketIO = require('socket.io');
 
 const EventEmitter = require('src/util/eventEmitter.js');
-const ClientUpdater = require('./socket/clientUpdater.js');
 const Handler = require('./socket/handler.js');
 
 module.exports = {

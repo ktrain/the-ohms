@@ -1,8 +1,9 @@
 {
 	"port": 8001,
 	"logging": {
-		"forceLevel": "info"
+		"forceLevel": "error"
 	},
 	"cache": {
+		"db": 13
 	}
 }
