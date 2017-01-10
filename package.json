@@ -7,10 +7,12 @@
     "node": "^7.0.0"
   },
   "scripts": {
-    "test": "mocha --recursive test",
+    "test": "mocha test",
     "lint": "./node_modules/.bin/eslint src",
-    "start": "node src/main.js",
-    "start:dev": "nodemon -L --ignore test src/main.js"
+    "build": "node build.js",
+    "start:dev": "node dev.js",
+    "start:clean": "npm run build && npm run start:dev",
+    "start": "node src/main.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,7 @@
     "adjective-adjective-animal": "^1.3.3",
     "app-module-path": "^2.1.0",
     "body-parser": "^1.15.2",
+    "classnames": "^2.2.5",
     "express": "^4.14.0",
     "lodash": "^4.17.2",
     "log4js": "^1.1.0",
@@ -34,14 +37,14 @@
     "redis": "^2.6.3",
     "redlock": "^2.1.0",
     "socket.io": "^1.7.2",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "vitreum": "^4.0.11"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "eslint": "^3.12.2",
     "mocha": "^3.2.0",
-    "nodemon": "^1.11.0",
     "randomstring": "^1.1.5",
     "socket.io-client": "^1.7.2",
     "supertest": "^2.0.1"

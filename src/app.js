@@ -6,13 +6,11 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const routes = require('./routes.js');
+const clientRoutes = require('./client.js');
+
+app.use('/', clientRoutes);
 
 app.use(bodyParser.json());
-
-app.get('/', (req, res) => {
-	res.status(200).send({ message: 'Welcome to The Ohms. Can you resist?' });
-});
-
 app.use('/v1', routes);
 
 module.exports = app;

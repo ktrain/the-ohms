@@ -1,0 +1,13 @@
+{
+	"entryPoints": {
+		"main": "./client/main/main.jsx"
+	},
+	"assets": [],
+	"libs": [
+		"react",
+		"react-dom",
+		"vitreum/headtags",
+		"lodash",
+		"classnames"
+	]
+}
