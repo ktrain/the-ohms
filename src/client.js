@@ -3,6 +3,7 @@
 const express = require('express');
 const render = require('vitreum/steps/render');
 
+const logger = require('src/util/logger.js')('clientRouter');
 const templateFn = require('../client/template.js');
 
 const router = express.Router();
@@ -16,7 +17,7 @@ router.get('/', (req, res) => {
 	.then((page) => {
 		return res.status(200).send(page);
 	})
-	.catch(console.error);
+	.catch(logger.error);
 });
 
 module.exports = router;

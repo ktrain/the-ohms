@@ -9,10 +9,11 @@ var Game = require('./game.jsx');
 var Main = React.createClass({
 
 	render: function() {
-		console.log('props', this.props);
 		return <main>
 			<Headtags.title>The Ohms</Headtags.title>
 			<Headtags.meta name="description" content="Can you resist?" />
+
+			{/*<Headtags.meta name="viewport" content="width=device-width, initial-scale=1" />*/}
 
 			<Game path={this.props.url} />
 		</main>;

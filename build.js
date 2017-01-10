@@ -3,18 +3,18 @@
 const label = 'build';
 console.time(label);
 
-const cleanStep = require('vitreum/steps/clean');
-const jsxStep = require('vitreum/steps/jsx').partial;
-const libsStep = require('vitreum/steps/libs').partial;
-const lessStep = require('vitreum/steps/less').partial;
-const assetStep = require('vitreum/steps/assets').partial;
+const clean = require('vitreum/steps/clean');
+const jsx = require('vitreum/steps/jsx').partial;
+const libs = require('vitreum/steps/libs').partial;
+const less = require('vitreum/steps/less').partial;
+const assets = require('vitreum/steps/assets').partial;
 
 const project = require('./project.json');
 
-cleanStep()
-	.then(libsStep(project.libs))
-	.then(jsxStep('main', './client/main/main.jsx', project.libs))
-	.then(lessStep('main', project.shared))
-	.then(assetStep(project.assets, ['./client']))
+clean()
+	.then(libs(project.libs))
+	.then(jsx('main', './client/main/main.jsx', project.libs, [project.clientDir]))
+	.then(less('main', project.clientDir))
+	.then(assets(project.assets, [project.clientDir]))
 	.then(console.time.bind(console, label))
 	.catch(console.error);

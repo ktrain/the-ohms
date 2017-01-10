@@ -2,12 +2,17 @@
 	"entryPoints": {
 		"main": "./client/main/main.jsx"
 	},
+	"clientDir": "./client",
 	"assets": [],
 	"libs": [
 		"react",
 		"react-dom",
 		"vitreum/headtags",
 		"lodash",
-		"classnames"
+		"classnames",
+		"pico-flux",
+		"superagent",
+		"superagent-promise",
+		"loglevel"
 	]
 }

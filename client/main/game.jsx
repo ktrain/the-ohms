@@ -1,17 +1,34 @@
 'use strict';
 
-var React = require('react');
+const React = require('react');
 
-var Game = React.createClass({
+// data
+const Store = require('data/store');
+
+// components
+const PlayerDisplay = require('./playerDisplay/playerDisplay.jsx');
+
+
+const Game = React.createClass({
+
+	componentDidMount: function() {
+		Store.init();
+	},
 
 	render: function() {
 		return (
 			<div className="game">
-				WELL MET
+				<PlayerDisplay />
 			</div>
 		);
 	},
 
 });
 
-module.exports = Game;
+module.exports = Store.createSmartComponent(Game,
+	(props) => {
+		return {
+			player: Store.getPlayer(),
+		};
+	}
+);
