@@ -1,5 +1,15 @@
 {
 	"logging": {
 		"defaultLevel": "info"
+	},
+	"cache": {
+		"host": "127.0.0.1",
+		"port": 6379,
+		"user": "",
+		"db": 0,
+		"driftFactor": 0.01,
+		"retryCount": 10,
+		"retryDelay": 100,
+		"lockTTLms": 50
 	}
 }
