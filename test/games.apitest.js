@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 
 // always require the init file
 const testing = require('./test.init.js');

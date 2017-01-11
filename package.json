@@ -43,7 +43,6 @@
     "nodemon": "^1.11.0",
     "randomstring": "^1.1.5",
     "socket.io-client": "^1.7.2",
-    "supertest": "^2.0.1",
-    "supertest-as-promised": "^4.0.2"
+    "supertest": "^2.0.1"
   }
 }

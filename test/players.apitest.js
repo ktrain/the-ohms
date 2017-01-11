@@ -2,7 +2,7 @@
 
 // always require the init file
 const testing = require('./test.init.js');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const randomstring = require('randomstring');
 
 const app = require('src/app');
