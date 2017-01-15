@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 
-const GamesService = require('src/services/games.service.js');
+const GameService = require('src/services/game.service.js');
 
 
 const GameHandler = {
@@ -12,15 +12,15 @@ const GameHandler = {
 			return Promise.reject(new Error('Message requires `payload.gameId`.'));
 		}
 
-		return GamesService.addPlayerToGame(message.playerId, message.payload.gameId);
+		return GameService.addPlayerToGame(message.playerId, message.payload.gameId);
 	},
 
 	leaveGame: (message) => {
-		return GamesService.leaveGame(message.playerId);
+		return GameService.leaveGame(message.playerId);
 	},
 
 	startGame: (message) => {
-		return GamesService.startGame(message.playerId);
+		return GameService.startGame(message.playerId);
 	},
 
 };

@@ -2,7 +2,7 @@
 
 const PlayerDB = require('src/data/player.data.js');
 
-const PlayersService = {
+const PlayerService = {
 
 	createPlayer: (data) => {
 		return PlayerDB.create(data);
@@ -18,4 +18,4 @@ const PlayersService = {
 
 };
 
-module.exports = PlayersService;
+module.exports = PlayerService;

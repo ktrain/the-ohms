@@ -7,6 +7,7 @@ const should = testing.should;
 const randomstring = require('randomstring');
 
 const GameDB = require('src/data/game.data.js');
+const GameService = require('src/services/game.service.js');
 
 describe('GameDB', () => {
 

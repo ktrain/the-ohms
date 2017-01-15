@@ -4,7 +4,7 @@
 const testing = require('./test.init.js');
 const should = testing.should;
 
-const GamesService = require('src/services/games.service.js');
+const GameService = require('src/services/game.service.js');
 const EventEmitter = require('src/util/eventEmitter.js');
 
 describe('Server events', () => {
@@ -19,7 +19,7 @@ describe('Server events', () => {
 				done();
 			};
 			EventEmitter.on('game|save', listener);
-			GamesService.createGame();
+			GameService.createGame();
 		});
 
 	});

@@ -1,7 +1,7 @@
 'use strict';
 
 const GameDB = require('src/data/game.data.js');
-const PlayerService = require('src/services/players.service.js');
+const PlayerService = require('src/services/player.service.js');
 
 const GameService = {
 
@@ -39,6 +39,7 @@ const GameService = {
 				return PlayerService.markPlayerNoGame(player).then(() => {
 					return game;
 				});
+			});
 		});
 	},
 

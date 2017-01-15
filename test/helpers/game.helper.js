@@ -2,14 +2,14 @@
 
 const _ = require('lodash');
 
-const GamesService = require('src/services/games.service.js');
+const GameService = require('src/services/game.service.js');
 const GameDB = require('src/data/game.data.js');
 const Cache = require('src/util/cache.js');
 
 const GameHelper = {
 
 	createGame: () => {
-		return GamesService.createGame();
+		return GameService.createGame();
 	},
 
 	getAllGames: () => {
