@@ -9,15 +9,14 @@ const Store = require('data/store');
 const PlayerDisplay = require('./playerDisplay/playerDisplay.jsx');
 
 
-const Game = React.createClass({
+const Menu = React.createClass({
 
 	componentDidMount: function() {
-		Store.init();
 	},
 
 	render: function() {
 		return (
-			<div className="game">
+			<div className="menu">
 				<PlayerDisplay />
 			</div>
 		);
@@ -25,7 +24,7 @@ const Game = React.createClass({
 
 });
 
-module.exports = Store.createSmartComponent(Game,
+module.exports = Store.createSmartComponent(Menu,
 	(props) => {
 		return {
 			player: Store.getPlayer(),

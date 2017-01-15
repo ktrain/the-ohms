@@ -13,10 +13,30 @@ const Textbox = require('components/form/textbox.jsx');
 
 const PlayerDisplay = React.createClass({
 
+	getInitialState: function() {
+		return {
+			name: '',
+		};
+	},
+
+	handleNameChange: function(evt) {
+		this.setState({ name: evt.target.value });
+	},
+
+	handleSubmit: function(evt) {
+		evt.preventDefault();
+		Actions.createPlayer(this.state.name);
+	},
+
 	renderForm: function() {
 		return (
 			<form>
-				<Textbox ref="nameInput" />
+				<Textbox
+					name="name"
+					value={this.state.name}
+					onChange={this.handleNameChange}
+					onSubmit={this.handleSubmit}
+				/>
 			</form>
 		);
 	},

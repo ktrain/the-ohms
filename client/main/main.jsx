@@ -1,12 +1,13 @@
 'use strict';
 
-var React = require('react');
-var Headtags = require('vitreum/headtags');
+const React = require('react');
+const Headtags = require('vitreum/headtags');
 
 // components
-var Game = require('./game.jsx');
+const Menu = require('./menu.jsx');
+//const Game = require('./game.jsx');
 
-var Main = React.createClass({
+const Main = React.createClass({
 
 	render: function() {
 		return <main>
@@ -15,7 +16,7 @@ var Main = React.createClass({
 
 			{/*<Headtags.meta name="viewport" content="width=device-width, initial-scale=1" />*/}
 
-			<Game path={this.props.url} />
+			<Menu />
 		</main>;
 	},
 
