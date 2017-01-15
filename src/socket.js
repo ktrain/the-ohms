@@ -37,7 +37,7 @@ module.exports = {
 				}
 
 				if (parsedMessage.version !== 1) {
-					throw new Error(`Message must specify a version. Supported version: 1.`);
+					throw new Error(`Message must specify a message protocol version. Supported version: 1.`);
 				}
 
 				parsedMessage.playerId = playerId;

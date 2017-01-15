@@ -1,14 +1,21 @@
 'use strict';
 
-const PlayersDB = require('src/data/player.data.js');
+const PlayerDB = require('src/data/player.data.js');
 
 const PlayersService = {
+
 	createPlayer: (data) => {
-		return PlayersDB.create(data);
+		return PlayerDB.create(data);
 	},
+
 	getPlayer: (playerId) => {
-		return PlayersDB.get(playerId);
+		return PlayerDB.get(playerId);
 	},
+
+	markPlayerInGame: (player, gameId) => {
+		return PlayerDB.markPlayerInGame(player, gameId);
+	},
+
 };
 
 module.exports = PlayersService;

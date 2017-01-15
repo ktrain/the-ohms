@@ -1,9 +1,9 @@
 'use strict';
 
 const GameDB = require('src/data/game.data.js');
-const PlayersService = require('src/services/players.service.js');
+const PlayerService = require('src/services/players.service.js');
 
-const GamesService = {
+const GameService = {
 
 	createGame: () => {
 		return GameDB.create();
@@ -18,29 +18,43 @@ const GamesService = {
 	},
 
 	addPlayerToGame: (playerId, gameId) => {
-		return PlayersService.getPlayer(playerId).then((player) => {
+		return PlayerService.getPlayer(playerId).then((player) => {
 			if (!player) {
 				throw new Error(`Player does not exist (ID ${playerId})`);
 			}
-			return GameDB.addPlayer(gameId, player);
+			return GameDB.addPlayer(gameId, player).then((game) => {
+				return PlayerService.markPlayerInGame(player, gameId).then(() => {
+					return game;
+				});
+			});
 		});
 	},
 
-	deleteGame: (gameId) => {
-		return GamesService.getGame(gameId)
-			.then((game) => {
-				return game.delete();
-			});
+	leaveGame: (playerId) => {
+		return PlayerService.getPlayer(playerId).then((player) => {
+			if (!player.gameId) {
+				throw new Error(`Player ${player.id} is not in a game.`);
+			}
+			return GameDB.removePlayer(player.gameId, player.id).then((game) => {
+				return PlayerService.markPlayerNoGame(player).then(() => {
+					return game;
+				});
+		});
 	},
 
 	checkGameHasPlayerId: (game, playerId) => {
 		return GameDB.hasPlayer(game, playerId);
 	},
 
-	startGame: (gameId, playerId) => {
-		return GameDB.startGame(gameId, playerId);
+	startGame: (playerId) => {
+		return PlayerService.getPlayer(playerId).then((player) => {
+			if (!player.gameId) {
+				throw new Error(`Player ${player.id} is not in a game.`);
+			}
+			return GameDB.startGame(player.gameId);
+		});
 	},
 
 };
 
-module.exports = GamesService;
+module.exports = GameService;
