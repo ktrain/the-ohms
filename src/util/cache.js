@@ -84,19 +84,18 @@ const Cache = {
 		});
 	},
 
-	hashPut: (hashKey, value) => {
+	hashPut: (hashKey, value, key) => {
 		return new Promise((resolve, reject) => {
 			const val = Cache.prepValue(value);
-			const hashField = randomstring.generate({
-				length: config.get('cache:hashFieldLength'),
+			const hashField = key || randomstring.generate({
 				charset: 'alphanumeric',
 			});
 
-			queryClient.hset(hashKey, hashField, val, (err, success) => {
+			queryClient.hset(hashKey, hashField, val, (err) => {
 				if (err) {
 					return reject(new Error(err));
 				}
-				resolve(!!success);
+				resolve(value);
 			});
 		});
 	},
@@ -113,7 +112,22 @@ const Cache = {
 		});
 	},
 
-	hashGet: (hashKey) => {
+	hashGet: (hashKey, key) => {
+		if (!key) {
+			return Cache.hashGetAll(hashKey);
+		}
+
+		return new Promise((resolve, reject) => {
+			queryClient.hget(hashKey, key, (err, res) => {
+				if (err) {
+					return reject(new Error(err));
+				}
+				resolve(attemptJsonParse(res));
+			});
+		});
+	},
+
+	hashGetAll: (hashKey) => {
 		return new Promise((resolve, reject) => {
 			queryClient.hgetall(hashKey, (err, res) => {
 				if (err) {
@@ -162,16 +176,15 @@ const Cache = {
 		});
 	},
 
-	hashGetAndDel: (hashKey) => {
+	hashGetAndDel: (hashKey, key) => {
 		return new Promise((resolve, reject) => {
 			queryClient.multi()
-				.hgetall(hashKey)
-				.del(hashKey)
-				.exec((err, replies) => {
+				.hget(hashKey, key)
+				.hdel(hashKey, key)
+				.exec((err, [hash]) => {
 					if (err) {
 						return reject(new Error(err));
 					}
-					const hash = replies[0];
 					resolve(parseHash(hash));
 				});
 		});
