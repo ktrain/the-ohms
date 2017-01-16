@@ -16,6 +16,10 @@ const PlayerService = {
 		return PlayerDB.markPlayerInGame(player, gameId);
 	},
 
+	markPlayerNoGame: (player) => {
+		return PlayerDB.markPlayerNoGame(player);
+	},
+
 };
 
 module.exports = PlayerService;

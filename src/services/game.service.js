@@ -30,7 +30,7 @@ const GameService = {
 		});
 	},
 
-	leaveGame: (playerId) => {
+	removePlayerFromGame: (playerId) => {
 		return PlayerService.getPlayer(playerId).then((player) => {
 			if (!player.gameId) {
 				throw new Error(`Player ${player.id} is not in a game.`);

@@ -30,6 +30,12 @@ const PlayerDB = {
 		return Cache.put(key, playerData);
 	},
 
+	markPlayerNoGame: (player) => {
+		const key = PlayerDB.prepareKey(player.id);
+		const playerData = _.omit(player, 'gameId');
+		return Cache.put(key, playerData);
+	},
+
 	get: (id) => {
 		const key = PlayerDB.prepareKey(id);
 		return Cache.get(key);

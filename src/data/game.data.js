@@ -92,7 +92,7 @@ const GameDB = {
 				.catch((err) => {
 					lock.unlock();
 					throw err;
-				}).then((...res) => {
+				}).then((res) => {
 					lock.unlock();
 					return res;
 				});
@@ -130,13 +130,15 @@ const GameDB = {
 		});
 	},
 
-	removePlayer: (gameId, playerId) => {
+	removePlayer: (id, playerId) => {
 		return GameDB.doUnderLock(id, (game) => {
 			if (!game) {
 				throw new Error('Game does not exist.');
 			}
 
-			game.players = _.remove(game.players, { id: playerId });
+			game.players = _.filter(game.players, (player) => {
+				return player.id !== playerId;
+			});
 
 			return GameDB.save(game);
 		});
