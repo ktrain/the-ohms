@@ -19,10 +19,21 @@ const PlayerDB = {
 	create: (data) => {
 		const newPlayerData = PlayerDB.prepareNewData(_.clone(data));
 		const key = PlayerDB.prepareKey(newPlayerData.id);
-		return Cache.put(key, newPlayerData)
-			.then(() => {
-				return newPlayerData;
-			});
+		return Cache.put(key, newPlayerData);
+	},
+
+	markPlayerInGame: (player, gameId) => {
+		const key = PlayerDB.prepareKey(player.id);
+		const playerData = _.assign({}, player, {
+			gameId: gameId,
+		});
+		return Cache.put(key, playerData);
+	},
+
+	markPlayerNoGame: (player) => {
+		const key = PlayerDB.prepareKey(player.id);
+		const playerData = _.omit(player, 'gameId');
+		return Cache.put(key, playerData);
 	},
 
 	get: (id) => {

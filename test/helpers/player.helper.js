@@ -2,11 +2,11 @@
 
 const randomstring = require('randomstring');
 
-const PlayersService = require('src/services/players.service.js');
+const PlayerService = require('src/services/player.service.js');
 
 const PlayerHelper = {
 	createPlayer: () => {
-		return PlayersService.createPlayer({
+		return PlayerService.createPlayer({
 			name: randomstring.generate({
 				length: 16,
 				charset: 'alphanumeric',

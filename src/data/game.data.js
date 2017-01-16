@@ -83,87 +83,91 @@ const GameDB = {
 		return !!_.find(game.players, (player) => { return player.id === playerId; });
 	},
 
+	doUnderLock: (id, doTheWork) => {
+		const key = GameDB.prepareKey(id);
+
+		return Cache.acquireLock(key).then((lock) => {
+			return GameDB.get(id)
+				.then(doTheWork)
+				.catch((err) => {
+					lock.unlock();
+					throw err;
+				}).then((res) => {
+					lock.unlock();
+					return res;
+				});
+		});
+	},
+
 	addPlayer: (id, player) => {
 		if (!_.isObject(player)) {
 			throw new Error(`Player must be an object. Received ${JSON.stringify(player)}.`);
 		}
 
-		const key = GameDB.prepareKey(id);
-
 		logger.debug('acquiring lock to add player to game');
-		return Cache.acquireLock(key).then((lock) => {
-			logger.debug('LOCK ACQUIRED');
-			return GameDB.get(id)
-				.then((game) => {
-					if (!game) {
-						throw new Error('Game does not exist.');
-					}
+		return GameDB.doUnderLock(id, (game) => {
+			if (!game) {
+				throw new Error('Game does not exist.');
+			}
 
-					if (game.state !== 'waiting for players') {
-						throw new Error('Game has already started.');
-					}
+			if (game.state !== 'waiting for players') {
+				throw new Error('Game has already started.');
+			}
 
-					if (game.players.length >= GameSetup.getMaxNumPlayers()) {
-						throw new Error('Game is full.');
-					}
+			if (game.players.length >= GameSetup.getMaxNumPlayers()) {
+				throw new Error('Game is full.');
+			}
 
-					const playerAlreadyInGame = GameDB.hasPlayerId(game, player.id);
-					if (playerAlreadyInGame) {
-						throw new Error('Player is already in this game.');
-					}
+			const playerAlreadyInGame = GameDB.hasPlayerId(game, player.id);
+			if (playerAlreadyInGame) {
+				throw new Error('Player is already in this game.');
+			}
 
-					game.players.push(player);
-					logger.debug('PLAYER ADDED');
+			game.players.push(player);
+			logger.debug('PLAYER ADDED');
 
-					return GameDB.save(game);
-				}).catch((err) => {
-					lock.unlock();
-					throw err;
-				}).then((game) => {
-					lock.unlock();
-					return game;
-				});
+			return GameDB.save(game);
 		});
 	},
 
-	startGame: (id, playerId) => {
-		logger.debug('STARTING GAME');
-		const key = GameDB.prepareKey(id);
+	removePlayer: (id, playerId) => {
+		return GameDB.doUnderLock(id, (game) => {
+			if (!game) {
+				throw new Error('Game does not exist.');
+			}
 
-		return Cache.acquireLock(key).then((lock) => {
-			return GameDB.get(id)
-				.then((game) => {
-					if (!game) {
-						throw new Error('Game does not exist.');
-					}
+			game.players = _.filter(game.players, (player) => {
+				return player.id !== playerId;
+			});
 
-					if (!GameDB.hasPlayerId(game, playerId)) {
-						throw new Error('Player is not in game.');
-					}
+			return GameDB.save(game);
+		});
+	},
 
-					if (game.state !== 'waiting for players') {
-						throw new Error('Game has already started.');
-					}
+	startGame: (id) => {
+		logger.debug('STARTING GAME', id);
 
-					if (game.players.length < GameSetup.getMinNumPlayers()) {
-						throw new Error(`Cannot start without at least ${GameSetup.getMinNumPlayers()} players`);
-					}
+		return GameDB.doUnderLock(id, (game) => {
+			if (!game) {
+				throw new Error('Game does not exist.');
+			}
 
-					game.state = 'selecting team';
+			if (game.state !== 'waiting for players') {
+				throw new Error('Game has already started.');
+			}
 
-					const setup = GameSetup.getGameSetupByNumPlayers(game.players.length);
-					game.numSpies = setup.numSpies;
-					game.rounds = setup.rounds;
-					game.currentRoundIndex = 0;
+			if (game.players.length < GameSetup.getMinNumPlayers()) {
+				throw new Error(`Cannot start without at least ${GameSetup.getMinNumPlayers()} players`);
+			}
 
-					return GameDB.save(game);
-				}).catch((err) => {
-					lock.unlock();
-					throw err;
-				}).then((game) => {
-					lock.unlock();
-					return game;
-				});
+			game.state = 'selecting team';
+
+			const setup = GameSetup.getGameSetupByNumPlayers(game.players.length);
+			game.numSpies = setup.numSpies;
+			game.rounds = setup.rounds;
+			game.currentRoundIndex = 0;
+
+			return GameDB.save(game);
 		});
 	},
 
