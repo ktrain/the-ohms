@@ -14,21 +14,6 @@ describe('/games', () => {
 
 	const basePath = '/v1/games';
 
-	describe('POST', () => {
-
-		it('creates a game', () => {
-			return request(app)
-				.post(basePath)
-				.expect(200)
-				.then((res) => {
-					res.body.should.have.property('game').that.is.an('object');
-					res.body.game.should.have.property('id').that.is.a('string');
-					res.body.game.should.have.property('name').that.is.a('string');
-				});
-		});
-
-	});
-
 	describe('GET', () => {
 
 		before('Clear games', () => {
