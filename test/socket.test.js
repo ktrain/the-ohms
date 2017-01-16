@@ -22,6 +22,7 @@ describe('WebSocket server', function() {
 	this.slow(1500);
 
 	const players = [];
+	let game;
 	let clients;
 	let socketUrl;
 
@@ -55,10 +56,11 @@ describe('WebSocket server', function() {
 		);
 	});
 
-	beforeEach('Create clients', () => {
-		clients = _.map(players, (player, i) => {
-			return SocketIOClient(socketUrl, { query: `playerId=${player.id}` });
-		});
+	beforeEach('Create game', () => {
+		return GameHelper.createGame()
+			.then((g) => {
+				game = g;
+			});
 	});
 
 	afterEach('Disconnect clients', () => {
@@ -72,8 +74,10 @@ describe('WebSocket server', function() {
 	});
 
 	it('all clients should receive clientUpdate messages', (done) => {
-		let game;
 		const events = _.times(players.length, () => null);
+		clients = _.map(players, (player, i) => {
+			return SocketIOClient(socketUrl, { query: `playerId=${player.id}&gameId=${game.id}` });
+		});
 		_.each(clients, (client, i) => {
 			// set up clientUpdate listener
 			client.on('clientUpdate', (event) => {
@@ -87,26 +91,13 @@ describe('WebSocket server', function() {
 				}
 			});
 		});
-		// create game and have the players join
-		GameHelper.createGame()
-			.then((g) => {
-				game = g;
-				_.each(clients, (client, i) => {
-					client.emit('message', JSON.stringify({
-						version: 1,
-						playerId: players[i].id,
-						type: 'joinGame',
-						payload: {
-							gameId: game.id,
-						},
-					}));
-				});
-			});
 	});
 
 	it('`startGame` should trigger clientUpdate messages', (done) => {
-		let game;
 		const events = _.times(players.length, () => null);
+		clients = _.map(players, (player, i) => {
+			return SocketIOClient(socketUrl, { query: `playerId=${player.id}&gameId=${game.id}` });
+		});
 		_.each(clients, (client, i) => {
 			client.on('clientUpdate', (event) => {
 				should.exist(event);
@@ -121,30 +112,16 @@ describe('WebSocket server', function() {
 				}
 			});
 		});
-		GameHelper.createGame()
-			.then((g) => {
-				game = g;
-				_.each(clients, (client, i) => {
-					client.emit('message', JSON.stringify({
-						version: 1,
-						playerId: players[i].id,
-						type: 'joinGame',
-						payload: {
-							gameId: game.id,
-						},
-					}));
-				});
-				setTimeout(() => {
-					clients[0].emit('message', JSON.stringify({
-						version: 1,
-						playerId: players[0].id,
-						type: 'startGame',
-						payload: {
-							gameId: game.id,
-						},
-					}));
-				}, 1000);
-			});
+		setTimeout(() => {
+			clients[0].emit('message', JSON.stringify({
+				version: 1,
+				playerId: players[0].id,
+				type: 'startGame',
+				payload: {
+					gameId: game.id,
+				},
+			}));
+		}, 1000);
 	});
 
 });
