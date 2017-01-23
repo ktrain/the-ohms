@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const uuid = require('uuid');
+const config = require('nconf');
 
 const Cache = require('src/util/cache.js');
 
@@ -12,33 +13,42 @@ const PlayerDB = {
 	},
 
 	prepareNewData: (data) => {
-		data.id = uuid.v4();
-		return _.pick(data, ['id', 'name']);
+		const newData = _.clone(data);
+		newData.id = uuid.v4();
+		return _.pick(newData, ['id', 'name']);
 	},
 
 	create: (data) => {
-		const newPlayerData = PlayerDB.prepareNewData(_.clone(data));
-		const key = PlayerDB.prepareKey(newPlayerData.id);
-		return Cache.put(key, newPlayerData);
+		const newPlayerData = PlayerDB.prepareNewData(data);
+		return PlayerDB.save(newPlayerData);
 	},
 
 	markPlayerInGame: (player, gameId) => {
-		const key = PlayerDB.prepareKey(player.id);
 		const playerData = _.assign({}, player, {
 			gameId: gameId,
 		});
-		return Cache.put(key, playerData);
+		return PlayerDB.save(playerData);
 	},
 
 	markPlayerNoGame: (player) => {
-		const key = PlayerDB.prepareKey(player.id);
 		const playerData = _.omit(player, 'gameId');
-		return Cache.put(key, playerData);
+		return PlayerDB.save(playerData);
 	},
 
 	get: (id) => {
 		const key = PlayerDB.prepareKey(id);
 		return Cache.get(key);
+	},
+
+	save: (player) => {
+		const key = PlayerDB.prepareKey(player.id);
+		return Cache.put(key, player)
+			.then((data) => {
+				return Cache.expire(key, config.get('data:player:inactivityExpirySeconds'))
+					.then(() => {
+						return data;
+					});
+			});
 	},
 
 };

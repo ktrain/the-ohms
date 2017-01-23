@@ -36,9 +36,9 @@ const redisLock = new Redlock(
 	// one client per redis node
 	[queryClient],
 	{
-		driftFactor: config.get('cache:driftFactor'),
-		retryCount: config.get('cache:retryCount'),
-		retryDelay: config.get('cache:retryDelay'),
+		driftFactor: config.get('cache:locking:driftFactor'),
+		retryCount: config.get('cache:locking:retryCount'),
+		retryDelay: config.get('cache:locking:retryDelay'),
 	}
 );
 
@@ -196,7 +196,7 @@ const Cache = {
 
 	acquireLock: (key) => {
 		const lockKey = Cache.prepareLockKey(key);
-		return redisLock.lock(lockKey, config.get('cache:lockTTLms'));
+		return redisLock.lock(lockKey, config.get('cache:locking:lockTTLms'));
 	},
 
 	keys: (pattern) => {
@@ -226,6 +226,17 @@ const Cache = {
 
 	getSubscriptionConnection: () => {
 		return subClient;
+	},
+
+	expire: (key, expirySeconds) => {
+		return new Promise((resolve, reject) => {
+			queryClient.expire(key, expirySeconds, (err) => {
+				if (err) {
+					return reject(new Error(err));
+				}
+				return resolve();
+			});
+		});
 	},
 
 	getRawClientYesIKnowWhatImDoing: () => {

@@ -7,9 +7,19 @@
 		"port": 6379,
 		"user": "",
 		"db": 0,
-		"driftFactor": 0.01,
-		"retryCount": 10,
-		"retryDelay": 100,
-		"lockTTLms": 50
+		"locking": {
+			"driftFactor": 0.01,
+			"retryCount": 10,
+			"retryDelay": 100,
+			"lockTTLms": 50
+		}
+	},
+	"data": {
+		"player": {
+			"inactivityExpirySeconds": 259200
+		},
+		"game": {
+			"inactivityExpirySeconds": 176400
+		}
 	}
 }

@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 const generateName = require('adjective-adjective-animal');
+const config = require('nconf');
 
 const logger = require('src/util/logger.js')('game');
 const EventEmitter = require('src/util/eventEmitter.js');
@@ -53,7 +54,10 @@ const GameDB = {
 		return Cache.put(key, game)
 			.then((game) => {
 				EventEmitter.emit('game|save', game);
-				return game;
+				return Cache.expire(key, config.get('data:game:inactivityExpirySeconds'))
+					.then(() => {
+						return game;
+					});
 			});
 	},
 
@@ -119,12 +123,10 @@ const GameDB = {
 			}
 
 			const playerAlreadyInGame = GameDB.hasPlayerId(game, player.id);
-			if (playerAlreadyInGame) {
-				throw new Error('Player is already in this game.');
+			if (!playerAlreadyInGame) {
+				game.players.push(player);
+				logger.debug('PLAYER ADDED');
 			}
-
-			game.players.push(player);
-			logger.debug('PLAYER ADDED');
 
 			return GameDB.save(game);
 		});
