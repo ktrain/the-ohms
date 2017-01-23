@@ -10,6 +10,19 @@ router.post('/', (req, res, next) => {
 			res.status(200).send({
 				player: player,
 			});
+		}).catch(next);
+});
+
+router.get('/:playerId', (req, res, next) => {
+	PlayerService.getPlayer(req.params.playerId)
+		.then((player) => {
+			if (!player) {
+				return res.status(404).send({
+					message: 'No player found with that ID.',
+					playerId: req.params.playerId,
+				});
+			}
+			res.status(200).send({ player: player });
 		});
 });
 
