@@ -1,6 +1,7 @@
 'use strict';
 
 const flux = require('pico-flux');
+const Storage = require('data/storage');
 
 let State = {};
 
@@ -8,8 +9,8 @@ let State = {};
 const Store = flux.createStore({
 
 	PLAYER: (player) => {
-		State.player = player;
-		console.log('player', State.player);
+		Storage.put('player', player);
+		console.log('player', player);
 	},
 
 	GAME_STATE: (gameState) => {
@@ -18,8 +19,10 @@ const Store = flux.createStore({
 
 });
 
-Store.getPlayer    = () => State.player;
-Store.getGames     = () => State.games;
+Store.getPlayer = () => {
+	return Storage.get('player');
+};
+Store.getGames = () => State.games;
 Store.getGameState = () => State.gameState;
 
 module.exports = Store;

@@ -33,6 +33,9 @@ const Storage = {
 	},
 
 	get: (key) => {
+		if (typeof localStorage === 'undefined') {
+			return null;
+		}
 		const val = localStorage.getItem(key);
 		const parsedVal = Storage.attemptJsonParse(val);
 		logger.debug('STORAGE:GET', key, parsedVal);
