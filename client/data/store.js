@@ -11,10 +11,14 @@ const Store = flux.createStore({
 		State.player = player;
 	},
 
+	GAME_STATE: (gameState) => {
+		State.gameState = gameState;
+	},
+
 });
 
-Store.getPlayer = () => State.player;
-
-Store.getGames = () => State.games;
+Store.getPlayer    = () => State.player;
+Store.getGames     = () => State.games;
+Store.getGameState = () => State.gameState;
 
 module.exports = Store;
