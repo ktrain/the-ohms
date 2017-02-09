@@ -28,7 +28,7 @@ const Main = React.createClass({
 			return <NameAgent />;
 		}
 		if (!this.props.gameState) {
-			return <GameList games={this.props.games} />;
+			return <GameList playerName={this.props.player.name} />;
 		}
 		//return <Game state={this.props.gameState} />;
 	},

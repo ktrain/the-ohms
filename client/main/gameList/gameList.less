@@ -1,3 +1,50 @@
 
 .gameList {
+	font-size: @fontSizeMedium;
+	.title {
+		height: 100px;
+	}
+	.player {
+		text-align: left;
+		margin-bottom: 50px;
+		a {
+			text-transform: uppercase;
+			border-bottom: 8px dotted @textGrey;
+		}
+	}
+	.create {
+		margin-bottom: 40px;
+	}
+	.joinMessage {
+		font-size: @fontSizeSmall;
+		text-align: left;
+		margin-bottom: 50px;
+	}
+	ul.list {
+		text-align: left;
+		font-size: @fontSizeSmall;
+		li.game {
+			a {
+				display: block;
+				padding: 30px 0px;
+			}
+			.name {
+				text-transform: capitalize;
+			}
+			.right {
+				float: right;
+				.players {
+					display: inline-block;
+				}
+				.status {
+					display: inline-block;
+					width: 32px;
+					height: 32px;
+					border-radius: 100%;
+					background-color: @green;
+					margin: 8px 2px 0px 25px;
+				}
+			}
+		}
+	}
 }

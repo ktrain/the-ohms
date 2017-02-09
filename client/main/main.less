@@ -34,7 +34,7 @@ main {
 
 button {
 	background-color: transparent;
-	border: 4px solid @textGrey;
+	border: @borderWidth solid @textGrey;
 	color: @textGrey;
 	font-size: @fontSizeBig;
 	text-transform: uppercase;
@@ -42,7 +42,24 @@ button {
 	width: 100%;
 }
 
+ul {
+	li {
+		list-style-type: none;
+	}
+}
+
+a:active, button:active {
+	background-color: @textGrey;
+	color: @backgroundGrey;
+}
+
 // colors
 @backgroundGrey: #2a2a2a;
 @textGrey: #e0e0e0;
+@green: #70d771;
+
 @fontSizeBig: 56px;
+@fontSizeMedium: 48px;
+@fontSizeSmall: 40px;
+
+@borderWidth: 5px;
