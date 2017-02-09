@@ -21,8 +21,28 @@ input {
 
 html, body {
 	user-select: none;
+	background-color: @backgroundGrey;
 }
 
 main {
-	font-size: 48px;
+	color: @textGrey;
+	font-size: @fontSizeBig;
+	text-align: center;
+	padding: 100px;
+	font-family: sans-serif;
 }
+
+button {
+	background-color: transparent;
+	border: 4px solid @textGrey;
+	color: @textGrey;
+	font-size: @fontSizeBig;
+	text-transform: uppercase;
+	padding: 20px 40px;
+	width: 100%;
+}
+
+// colors
+@backgroundGrey: #2a2a2a;
+@textGrey: #e0e0e0;
+@fontSizeBig: 56px;

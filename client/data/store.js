@@ -9,6 +9,7 @@ const Store = flux.createStore({
 
 	PLAYER: (player) => {
 		State.player = player;
+		console.log('player', State.player);
 	},
 
 	GAME_STATE: (gameState) => {

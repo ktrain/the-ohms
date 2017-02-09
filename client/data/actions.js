@@ -24,7 +24,7 @@ const Actions = {
 			})
 			.catch((err) => {
 				console.error(err);
-				throw new Error('Failed to create player.');
+				throw new Error('Failed to activate agent.');
 			});
 	},
 

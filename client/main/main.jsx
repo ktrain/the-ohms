@@ -14,7 +14,7 @@ const GameList = require('main/gameList/gameList.jsx');
 
 const Main = React.createClass({
 
-	getInitialState: function() {
+	getDefaultProps: function() {
 		return {
 			player: null,
 			games: null,
@@ -23,13 +23,14 @@ const Main = React.createClass({
 	},
 
 	renderPage: function() {
-		if (!this.state.player) {
+		console.log(this.props);
+		if (!this.props.player) {
 			return <NameAgent />;
 		}
-		if (!this.state.gameState) {
-			return <GameList games={this.state.games} />;
+		if (!this.props.gameState) {
+			return <GameList games={this.props.games} />;
 		}
-		//return <Game state={this.state.gameState} />;
+		//return <Game state={this.props.gameState} />;
 	},
 
 	render: function() {
@@ -52,5 +53,5 @@ module.exports = Store.createSmartComponent(Main, (props) => {
 		player: Store.getPlayer(),
 		games: Store.getGames(),
 		gameState: Store.getGameState(),
-	}
+	};
 });
