@@ -29,7 +29,7 @@ const Handler = {
 			game = g;
 			return Promise.all([
 				Handler.bindOutgoingMessageHandler(socket, playerId),
-				Handler.bindIncomingMessageHandler(socket, playerId),
+				Handler.bindIncomingMessageHandler(socket, playerId, game.id),
 			]);
 		})
 		.then(() => {
@@ -53,22 +53,17 @@ const Handler = {
 		});
 	},
 
-	bindIncomingMessageHandler: (socket, playerId) => {
+	bindIncomingMessageHandler: (socket, playerId, gameId) => {
 		socket.on('message', (message) => {
-			let parsedMessage;
-			try {
-				parsedMessage = JSON.parse(message);
-			} catch(err) {
-				throw new Error(`Could not JSON.parse incoming message: ${message}`);
+			if (message.version !== 1) {
+				logger.error(new Error(`Message must specify a message protocol version. Supported version: 1.`));
+				return;
 			}
 
-			if (parsedMessage.version !== 1) {
-				throw new Error(`Message must specify a message protocol version. Supported version: 1.`);
-			}
-
-			parsedMessage.playerId = playerId;
-			logger.debug('incoming message:', parsedMessage);
-			Handler.handleMessage(parsedMessage)
+			message.playerId = playerId;
+			message.gameId = gameId;
+			logger.debug('incoming message:', message);
+			Handler.handleMessage(message)
 				.catch((err) => {
 					logger.error(err);
 					socket.emit('messageError', err);
@@ -76,36 +71,34 @@ const Handler = {
 		});
 	},
 
-	handleMessage: (parsedMessage) => {
+	handleMessage: (message) => {
 		return new Promise((resolve, reject) => {
-			if (!parsedMessage.type) {
-				return reject(new Error(`Incoming message has no type: ${parsedMessage}`));
+			if (!message.type) {
+				return reject(new Error(`Incoming message has no type: ${JSON.stringify(message)}`));
 			}
 
-			if (!parsedMessage.playerId) {
-				return reject(new Error(`Incoming message has no playerId: ${parsedMessage}`));
+			if (!message.playerId) {
+				return reject(new Error(`Incoming message has no playerId: ${JSON.stringify(message)}`));
 			}
 
-			switch (parsedMessage.type) {
-				case 'joinGame':
-					return GameHandler.joinGame(parsedMessage);
+			switch (message.type) {
+				case 'leaveGame':
+					return GameHandler.leaveGame(message);
 				case 'startGame':
-					return GameHandler.startGame(parsedMessage);
-				case 'deleteGame':
-					return GameHandler.deleteGame(parsedMessage);
+					return GameHandler.startGame(message);
 				case 'selectTeam':
-					break;
+					return GameHandler.selectTeam(message);
 				case 'approveTeam':
-					break;
+					return GameHandler.approveTeam(message);
 				case 'rejectTeam':
-					break;
+					return GameHandler.rejectTeam(message);
 				case 'succeedMisson':
-					break;
+					return GameHandler.succeedMission(message);
 				case 'failMission':
-					break;
+					return GameHandler.failMission(message);
 			}
 
-			return reject(new Error(`Incoming message has unknown type: ${parsedMessage}`));
+			return reject(new Error(`Incoming message has unknown type: ${JSON.stringify(message)}`));
 		});
 	},
 
