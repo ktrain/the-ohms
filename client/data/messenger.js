@@ -3,8 +3,6 @@
 const socketClient = require('socket.io-client');
 const _ = require('lodash');
 
-const Actions = require('data/actions');
-
 let client;
 
 
