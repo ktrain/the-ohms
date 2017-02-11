@@ -17,4 +17,11 @@ const Game = React.createClass({
 
 });
 
-module.exports = Game;
+module.exports = Store.createSmartComponent(
+	Game,
+	() => {
+		return {
+			gameState: Store.getGameState(),
+		};
+	}
+);

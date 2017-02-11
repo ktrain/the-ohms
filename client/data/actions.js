@@ -66,7 +66,7 @@ const Actions = {
 			throw new Error('No player; cannot create a game');
 		}
 		const client = socketClient('/', { query: `playerId=${player.id}` });
-		dispatch('SOCKET_CLIENT', client);
+		dispatch('SOCKET', client);
 	},
 
 	connectAndJoinGame: (gameId) => {
@@ -75,7 +75,7 @@ const Actions = {
 			throw new Error('No player; cannot create a game');
 		}
 		const client = socketClient('/', { query: `playerId=${player.id}&gameId=${gameId}` });
-		dispatch('SOCKET_CLIENT', client);
+		dispatch('SOCKET', client);
 	},
 
 	leaveGame: () => {
