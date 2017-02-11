@@ -26,7 +26,7 @@ const Actions = {
 			.post('/v1/players')
 			.send({ name: formattedName })
 			.then((res) => {
-				dispatch('PLAYER', res.body.player);
+				dispatch('PLAYER', res.body);
 			})
 			.catch((err) => {
 				console.error(err);
@@ -34,11 +34,22 @@ const Actions = {
 			});
 	},
 
+	getPlayer: (playerId) => {
+		return request
+			.get(`/v1/players/${playerId}`)
+			.then((res) => {
+				const player = res.body;
+				dispatch('PLAYER', player);
+				return player;
+			});
+	},
+
 	getGames: () => {
 		return request
 			.get('/v1/games')
 			.then((res) => {
-				dispatch('GAMES', res.body.list)
+				const games = res.body.list;
+				dispatch('GAMES', games);
 			})
 			.catch((err) => {
 				console.error(err);

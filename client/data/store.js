@@ -1,6 +1,7 @@
 'use strict';
 
 const flux = require('pico-flux');
+const _ = require('lodash');
 const Storage = require('data/storage');
 
 const State = {};
@@ -13,6 +14,9 @@ const Store = flux.createStore({
 	},
 
 	PLAYER: (player) => {
+		if (player.id === _.get(State, 'player.id')) {
+			return false;
+		}
 		Storage.put('player', player);
 	},
 
@@ -26,7 +30,9 @@ const Store = flux.createStore({
 
 	SOCKET: (socket) => {
 		State.socket = socket;
-		State.socket.on('clientUpdate', (event) => {
+		State.socket.on('event', (event) => {
+			console.log('received client update');
+			console.log(event);
 			State.gameState = event.payload;
 			Store.emitChange();
 		});

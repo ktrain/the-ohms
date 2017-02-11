@@ -27,11 +27,27 @@ const Main = React.createClass({
 
 	componentDidMount: function() {
 		if (!this.props.player) {
+			console.log('no player');
+			// go to default NameAgent page
 			return;
 		}
-		if (!this.props.gameState) {
-			Actions.setPageState('Menu');
-		}
+		Actions.getPlayer(this.props.player.id)
+			.then((player) => {
+				console.log('fetched player');
+				if (player.gameId) {
+					console.log('player has game ID; connecting');
+					Actions.connectAndJoinGame(player.gameId);
+					console.log('joined game');
+					Actions.setPageState('Game');
+				} else {
+					console.log('no game; going to menu');
+					return Actions.setPageState('Menu');
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+				return Actions.setPageState('NameAgent');
+			});
 	},
 
 	renderPage: function() {
@@ -44,7 +60,7 @@ const Main = React.createClass({
 			case 'Lobby':
 				return <Lobby />;
 			case 'Game':
-				//return <Game state={this.props.gameState} />;
+				return <Game state={this.props.gameState} />;
 			default:
 				throw new Error(`Invalid pageState: ${this.props.pageState}`);
 		}
