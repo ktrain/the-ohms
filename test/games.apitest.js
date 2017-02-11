@@ -117,8 +117,7 @@ describe('/games', () => {
 						.get(path)
 						.expect(200)
 						.then((res) => {
-							res.body.should.have.property('game');
-							res.body.game.should.have.property('id').that.equals(game.id);
+							res.body.should.have.property('id').that.equals(game.id);
 						});
 				});
 
