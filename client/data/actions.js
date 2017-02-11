@@ -2,9 +2,9 @@
 
 const _ = require('lodash');
 const dispatch = require('pico-flux').dispatch;
-const socketClient = require('socket.io-client');
 const request = require('data/request');
 
+const Messenger = require('data/messenger');
 const Store = require('data/store');
 
 
@@ -13,6 +13,7 @@ const Actions = {
 	setPageState: (pageState) => {
 		dispatch('PAGE_STATE', pageState);
 	},
+
 
 	// http actions
 
@@ -65,8 +66,7 @@ const Actions = {
 		if (!player) {
 			throw new Error('No player; cannot create a game');
 		}
-		const client = socketClient('/', { query: `playerId=${player.id}` });
-		dispatch('SOCKET', client);
+		Actions.openSocketConnection('/', { query: `playerId=${player.id}` });
 	},
 
 	connectAndJoinGame: (gameId) => {
@@ -74,12 +74,18 @@ const Actions = {
 		if (!player) {
 			throw new Error('No player; cannot create a game');
 		}
-		const client = socketClient('/', { query: `playerId=${player.id}&gameId=${gameId}` });
-		dispatch('SOCKET', client);
+		Actions.openSocketConnection('/', { query: `playerId=${player.id}&gameId=${gameId}` });
+	},
+
+	openSocketConnection: (url, query) => {
+		Messenger.connect(url, query, (event) => {
+			console.log('received message', event);
+			dispatch('GAME_STATE', event.payload);
+		});
 	},
 
 	leaveGame: () => {
-		dispatch('SOCKET_DISCONNECT');
+		Messenger.send('leaveGame');
 	},
 
 	startGame: () => {

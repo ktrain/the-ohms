@@ -28,20 +28,8 @@ const Store = flux.createStore({
 		State.games = games;
 	},
 
-	SOCKET: (socket) => {
-		State.socket = socket;
-		console.log('new socket', State.socket);
-		State.socket.on('clientUpdate', (event) => {
-			console.log('received client update', event);
-			State.gameState = event.payload;
-			Store.emitChange();
-		});
-	},
-
-	SOCKET_DISCONNECT: () => {
-		State.socket.disconnect();
-		delete State.socket;
-		delete State.gameState;
+	GAME_STATE: (gameState) => {
+		State.gameState = gameState;
 	},
 
 });
@@ -52,6 +40,5 @@ Store.getPlayer = () => {
 };
 Store.getGames = () => State.games;
 Store.getGameState = () => State.gameState;
-Store.getSocket = () => State.socket;
 
 module.exports = Store;

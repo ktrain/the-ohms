@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const _ = require('lodash');
 
 // data
 const Actions = require('data/actions');
@@ -20,6 +21,14 @@ const Lobby = React.createClass({
 		Actions.setPageState('Menu');
 	},
 
+	renderPlayers: function() {
+		return _.map(this.props.gameState.players, (player, index) => {
+			return (
+				<li key={index}>{player.name}</li>
+			);
+		});
+	},
+
 	render: function() {
 		const gameState = this.props.gameState;
 		return (
@@ -29,6 +38,9 @@ const Lobby = React.createClass({
 					<div className="title">{gameState.name} Lobby</div>
 					<div className="playerCount">{gameState.players.length} players</div>
 				</div>
+				<ul className="players">
+					{this.renderPlayers()}
+				</ul>
 			</div>
 		);
 	},
