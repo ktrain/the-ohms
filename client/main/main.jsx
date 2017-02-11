@@ -49,13 +49,12 @@ const Main = React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		if (!this.props.gameState && !!nextProps.gameState) {
+		if (!!nextProps.gameState) {
 			Actions.setPageState('Game');
 		}
 	},
 
 	renderPage: function() {
-		console.log(this.props);
 		switch (this.props.pageState) {
 			case 'NameAgent':
 				return <NameAgent />;

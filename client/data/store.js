@@ -10,6 +10,9 @@ const State = {};
 const Store = flux.createStore({
 
 	PAGE_STATE: (pageState) => {
+		if (pageState === State.pageState) {
+			return false;
+		}
 		State.pageState = pageState;
 	},
 
@@ -26,6 +29,10 @@ const Store = flux.createStore({
 
 	GAMES: (games) => {
 		State.games = games;
+	},
+
+	GAME_LEAVE: () => {
+		delete State.gameState;
 	},
 
 	GAME_STATE: (gameState) => {

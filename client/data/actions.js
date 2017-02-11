@@ -86,6 +86,7 @@ const Actions = {
 
 	leaveGame: () => {
 		Messenger.send('leaveGame');
+		dispatch('GAME_LEAVE');
 	},
 
 	startGame: () => {
