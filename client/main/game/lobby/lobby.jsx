@@ -37,7 +37,11 @@ const Lobby = React.createClass({
 		return (
 			<div className="lobby">
 				<div className="header">
-					<a onClick={this.handleBackButtonClick} className="backButton">&lt;-</a>
+					<div className="left">
+						<a onClick={this.handleBackButtonClick} className="backButton">
+							<i className="fa fa-arrow-left" />
+						</a>
+					</div>
 					<div className="title">{gameState.name} Lobby</div>
 					<div className="playerCount">{gameState.players.length} players</div>
 				</div>
