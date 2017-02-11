@@ -48,7 +48,7 @@ const PlayerDB = {
 					.then(() => {
 						return data;
 					});
-			});*/
+			})*/;
 	},
 
 };

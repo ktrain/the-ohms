@@ -5,7 +5,6 @@ const logger = require('src/util/logger.js')('socketHandler');
 const EventEmitter = require('src/util/eventEmitter.js');
 const GameHandler = require('./game.handler.js');
 const GameService = require('src/services/game.service.js');
-const PlayerService = require('src/services/player.service.js');
 
 
 const Handler = {
@@ -35,7 +34,7 @@ const Handler = {
 		})
 		.then(() => {
 			logger.debug('Adding player connection to game', game.id);
-			return GameService.addPlayerToGame(playerId, game.id)
+			return GameService.addPlayerToGame(playerId, game.id);
 		})
 		.catch((err) => {
 			if (game && game.players.length === 0) {

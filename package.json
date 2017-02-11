@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "mocha test",
-    "lint": "./node_modules/.bin/eslint src",
+    "lint": "./node_modules/.bin/eslint src client",
     "build": "node build.js",
     "start:dev": "node dev.js",
     "start:clean": "npm run build && npm run start:dev",
@@ -48,6 +48,7 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "eslint": "^3.12.2",
+    "eslint-plugin-react": "^6.9.0",
     "mocha": "^3.2.0",
     "randomstring": "^1.1.5",
     "socket.io-client": "^1.7.2",
