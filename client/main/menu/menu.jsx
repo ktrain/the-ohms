@@ -35,8 +35,12 @@ const Menu = React.createClass({
 		Actions.connectAndCreateGame();
 	},
 
+	handleRefreshClick: function(evt) {
+		evt.preventDefault();
+		Actions.getGames();
+	},
+
 	renderGameList: function() {
-		console.log('games', this.props.games);
 		const games = _.map(this.props.games, (game, index) => {
 			return (
 				<li key={index} className="game">
@@ -50,6 +54,11 @@ const Menu = React.createClass({
 				</li>
 			);
 		});
+		if (_.isEmpty(games)) {
+			return (
+				<div className="noGames">No games in progress</div>
+			);
+		}
 		return (
 			<ul className="list">
 				{games}
@@ -68,7 +77,15 @@ const Menu = React.createClass({
 					<button onClick={this.handleNewGameClick}>Create New Game</button>
 				</div>
 				<div className="joinMessage">or join an existing game:</div>
-				{this.renderGameList()}
+				<div className="refresh">
+					<a onClick={this.handleRefreshClick}><i className="fa fa-refresh" /></a>
+				</div>
+				<div className="games">
+					{this.renderGameList()}
+				</div>
+				<div className="refresh">
+					<button onClick={this.handleRefreshClick}>Refresh</button>
+				</div>
 			</div>
 		);
 	},

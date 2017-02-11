@@ -20,6 +20,10 @@ const NameAgentPage = React.createClass({
 		};
 	},
 
+	componentDidMount: function() {
+		this.refs.name.focus();
+	},
+
 	handleClear: function(evt) {
 		evt.preventDefault();
 		this.setState({ name: '' }, () => {
