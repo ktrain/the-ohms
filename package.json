@@ -10,8 +10,8 @@
     "test": "mocha test",
     "lint": "./node_modules/.bin/eslint src client",
     "postinstall": "npm run build",
-    "build": "node build.js",
-    "start:dev": "node dev.js",
+    "build": "node scripts/build.js",
+    "start:dev": "node scripts/dev.js",
     "start:clean": "npm run build && npm run start:dev",
     "start": "node src/main.js"
   },
@@ -42,7 +42,7 @@
     "redis": "^2.6.3",
     "redlock": "^2.1.0",
     "socket.io": "^1.7.2",
-    "superagent": "^3.3.1",
+    "superagent": "^3.4.2",
     "superagent-promise": "^1.1.0",
     "uuid": "^3.0.1",
     "vitreum": "^4.0.11"
