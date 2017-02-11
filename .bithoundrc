@@ -1,6 +1,7 @@
 {
     "ignore": [
         "test/**",
+        "scripts/**",
         "client/main/**",
         "client/components/**"
     ],
