@@ -12,16 +12,7 @@ const Menu = React.createClass({
 	getDefaultProps: function() {
 		return {
 			playerName: '',
-			games: [
-				{
-					name: 'hungry hippo',
-					players: [{}, {}, {}],
-				},
-				{
-					name: 'phlying phoenix',
-					players: [{}, {}, {}, {}, {}],
-				},
-			],
+			games: [],
 		};
 	},
 
