@@ -15,12 +15,9 @@ const Textbox = require('components/form/textbox.jsx');
 const NameAgentPage = React.createClass({
 
 	getInitialState: function() {
-		const state = {};
-		const player = Store.getPlayer();
-		if (player) {
-			state.name = player.name;
-		}
-		return state;
+		return {
+			name: _.get(Store.getPlayer(), 'name'),
+		};
 	},
 
 	handleClear: function(evt) {
@@ -38,7 +35,7 @@ const NameAgentPage = React.createClass({
 		evt.preventDefault();
 		Actions.createPlayer(this.state.name)
 			.then(() => {
-				Actions.setPageState('GameList');
+				Actions.setPageState('Menu');
 			});
 	},
 
