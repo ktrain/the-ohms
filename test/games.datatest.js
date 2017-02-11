@@ -4,7 +4,7 @@
 const testing = require('./test.init.js');
 const should = testing.should;
 
-const randomstring = require('randomstring');
+const _ = require('lodash');
 
 const GameHelper = require('./helpers/game.helper.js');
 const GameDB = require('src/data/game.data.js');
@@ -26,13 +26,16 @@ describe('GameDB', () => {
 
 describe('Game Service', () => {
 
-	let player;
+	let players;
 	let game;
 
-	beforeEach('Create player', () => {
-		return PlayerHelper.createPlayer()
-			.then((p) => {
-				player = p;
+	beforeEach('Create players', () => {
+		return Promise.all([
+			PlayerHelper.createPlayer(),
+			PlayerHelper.createPlayer(),
+		])
+			.then((ps) => {
+				players = ps;
 			});
 	});
 
@@ -46,17 +49,17 @@ describe('Game Service', () => {
 	describe('#addPlayerToGame', () => {
 
 		it('should add the player to the players array', () => {
-			return GameService.addPlayerToGame(player.id, game.id)
+			return GameService.addPlayerToGame(players[0].id, game.id)
 				.then((game) => {
 					should.exist(game);
-					game.should.have.property('players').that.deep.includes.members([player]);
+					game.should.have.property('players').that.deep.includes.members([players[0]]);
 				});
 		});
 
 		it('should mark the player in the cache with the game ID', () => {
-			return GameService.addPlayerToGame(player.id, game.id)
+			return GameService.addPlayerToGame(players[0].id, game.id)
 				.then(() => {
-					return PlayerService.getPlayer(player.id);
+					return PlayerService.getPlayer(players[0].id);
 				}).then((player) => {
 					should.exist(player);
 					player.should.have.property('gameId').that.equals(game.id);
@@ -67,26 +70,43 @@ describe('Game Service', () => {
 
 	describe('#removePlayerFromGame', () => {
 
-		beforeEach('Add player to game', () => {
-			return GameService.addPlayerToGame(player.id, game.id);
+		beforeEach('Add players to game', () => {
+			return Promise.all(
+				_.map(players, (player) => {
+					return GameService.addPlayerToGame(player.id, game.id);
+				})
+			);
 		});
 
 		it('should remove the player from the players array', () => {
-			return GameService.removePlayerFromGame(player.id, game.id)
+			return GameService.removePlayerFromGame(players[0].id, game.id)
 				.then((game) => {
 					should.exist(game);
 					game.should.have.property('players');
-					game.players.should.not.deep.include.members([player]);
+					game.players.should.not.deep.include.members([players[0]]);
 				});
 		});
 
 		it('should clear the game ID from the player in cache', () => {
-			return GameService.removePlayerFromGame(player.id, game.id)
+			return GameService.removePlayerFromGame(players[0].id, game.id)
 				.then(() => {
-					return PlayerService.getPlayer(player.id);
+					return PlayerService.getPlayer(players[0].id);
 				}).then((player) => {
 					should.exist(player);
 					player.should.not.have.property('gameId');
+				});
+		});
+
+		it('removing the last player should delete the game', () => {
+			return Promise.all([
+				GameService.removePlayerFromGame(players[0].id, game.id),
+				GameService.removePlayerFromGame(players[1].id, game.id),
+			])
+				.then(() => {
+					return GameService.getGame(game.id);
+				})
+				.then((game) => {
+					should.not.exist(game);
 				});
 		});
 

@@ -143,6 +143,11 @@ const GameDB = {
 				return player.id !== playerId;
 			});
 
+			if (game.players.length === 0) {
+				logger.debug('game is empty; destroying', id);
+				return GameDB.destroy(id);
+			}
+
 			return GameDB.save(game);
 		});
 	},

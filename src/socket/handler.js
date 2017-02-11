@@ -28,6 +28,7 @@ const Handler = {
 		.then((g) => {
 			game = g;
 			return Promise.all([
+				Handler.bindDisconnectHandler(socket, playerId),
 				Handler.bindOutgoingMessageHandler(socket, playerId),
 				Handler.bindIncomingMessageHandler(socket, playerId),
 			]);
@@ -41,6 +42,15 @@ const Handler = {
 				GameService.deleteGame(game.id);
 			}
 			throw err;
+		});
+	},
+
+	bindDisconnectHandler: (socket, playerId) => {
+		socket.on('disconnect', () => {
+			GameService.removePlayerFromGame(playerId)
+				.catch((err) => {
+					logger.error(err);
+				});
 		});
 	},
 
