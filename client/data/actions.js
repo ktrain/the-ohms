@@ -18,7 +18,7 @@ const Actions = {
 	// http actions
 
 	createPlayer: (name) => {
-		let formattedName = _.capitalize(name);
+		let formattedName = _.capitalize(name).trim();
 		const currentPlayer = Store.getPlayer();
 		if (currentPlayer && currentPlayer.name === formattedName) {
 			return Promise.resolve();
