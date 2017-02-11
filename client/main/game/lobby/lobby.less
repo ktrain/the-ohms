@@ -1,8 +1,24 @@
 
 .lobby {
 	.header {
+		margin-bottom: 80px;
 		.title {
 			text-transform: capitalize;
+		}
+		.playerCount {
+			font-size: @fontSizeSmall;
+		}
+	}
+	ul.players {
+		font-size: @fontSizeSmall;
+		li {
+			text-align: left;
+			.status {
+				float: right;
+				&.ready {
+					color: @green;
+				}
+			}
 		}
 	}
 }

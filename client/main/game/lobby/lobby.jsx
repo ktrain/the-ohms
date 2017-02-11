@@ -24,7 +24,10 @@ const Lobby = React.createClass({
 	renderPlayers: function() {
 		return _.map(this.props.gameState.players, (player, index) => {
 			return (
-				<li key={index}>{player.name}</li>
+				<li key={index} className="player">
+					<div className="status ready">Ready</div>
+					<div className="name">{player.name}</div>
+				</li>
 			);
 		});
 	},
