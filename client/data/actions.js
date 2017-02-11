@@ -1,24 +1,30 @@
 'use strict';
 
+const _ = require('lodash');
 const dispatch = require('pico-flux').dispatch;
-const request = require('./request.js');
-const storage = require('./storage.js');
+const socketClient = require('socket.io-client');
+const request = require('data/request');
+
+const Store = require('data/store');
+
 
 const Actions = {
 
-	loadPlayerFromStorage: () => {
-		const player = storage.get('player');
-		if (player) {
-			dispatch('PLAYER', player);
-		}
+	setPageState: (pageState) => {
+		dispatch('PAGE_STATE', pageState);
 	},
 
 	// http actions
 
 	createPlayer: (name) => {
+		let formattedName = _.capitalize(name);
+		const currentPlayer = Store.getPlayer();
+		if (currentPlayer && currentPlayer.name === formattedName) {
+			return Promise.resolve();
+		}
 		return request
 			.post('/v1/players')
-			.send({ name: name })
+			.send({ name: formattedName })
 			.then((res) => {
 				dispatch('PLAYER', res.body.player);
 			})
@@ -42,12 +48,23 @@ const Actions = {
 
 
 	// socket actions
+
 	connectAndCreateGame: () => {
-		dispatch('SOCKET_CONNECT_AND_CREATE_GAME');
+		const player = Store.getPlayer();
+		if (!player) {
+			throw new Error('No player; cannot create a game');
+		}
+		const client = socketClient('/', { query: `playerId=${player.id}` });
+		dispatch('SOCKET_CLIENT', client);
 	},
 
 	connectAndJoinGame: (gameId) => {
-		dispatch('SOCKET_CONNECT_AND_JOIN_GAME', gameId);
+		const player = Store.getPlayer();
+		if (!player) {
+			throw new Error('No player; cannot create a game');
+		}
+		const client = socketClient('/', { query: `playerId=${player.id}&gameId=${gameId}` });
+		dispatch('SOCKET_CLIENT', client);
 	},
 
 	leaveGame: () => {

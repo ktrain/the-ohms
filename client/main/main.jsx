@@ -1,36 +1,53 @@
 'use strict';
 
 const React = require('react');
+const _ = require('lodash');
 const Headtags = require('vitreum/headtags');
 
 // data
 const Store = require('data/store');
+const Actions = require('data/actions');
 
 // pages
 const NameAgent = require('main/nameAgent/nameAgent.jsx');
-const GameList = require('main/gameList/gameList.jsx');
-//const Game = require('main/game/game.jsx');
+const Menu = require('main/menu/menu.jsx');
+const Game = require('main/game/game.jsx');
 
 
 const Main = React.createClass({
 
 	getDefaultProps: function() {
 		return {
+			pageState: 'NameAgent',
 			player: null,
 			games: null,
 			gameState: null,
 		};
 	},
 
-	renderPage: function() {
-		console.log(this.props);
+	componentDidMount: function() {
 		if (!this.props.player) {
-			return <NameAgent />;
+			return;
 		}
 		if (!this.props.gameState) {
-			return <GameList playerName={this.props.player.name} />;
+			Actions.setPageState('Menu');
 		}
-		//return <Game state={this.props.gameState} />;
+	},
+
+	renderPage: function() {
+		console.log(this.props);
+		switch (this.props.pageState) {
+			case 'NameAgent':
+				return <NameAgent />;
+			case 'Menu':
+				return <Menu playerName={_.get(this.props.player, 'name')} />;
+			case 'Lobby':
+				return <Lobby />;
+			case 'Game':
+				//return <Game state={this.props.gameState} />;
+			default:
+				throw new Error(`Invalid pageState: ${this.props.pageState}`);
+		}
 	},
 
 	render: function() {
@@ -50,6 +67,7 @@ const Main = React.createClass({
 
 module.exports = Store.createSmartComponent(Main, (props) => {
 	return {
+		pageState: Store.getPageState(),
 		player: Store.getPlayer(),
 		games: Store.getGames(),
 		gameState: Store.getGameState(),

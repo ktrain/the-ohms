@@ -7,7 +7,7 @@ const _ = require('lodash');
 const Actions = require('data/actions');
 
 
-const GameList = React.createClass({
+const Menu = React.createClass({
 
 	getDefaultProps: function() {
 		return {
@@ -29,8 +29,19 @@ const GameList = React.createClass({
 		Actions.getGames();
 	},
 
-	handleGameClick: function(evt) {
+	handlePlayerClick: function(evt) {
 		evt.preventDefault();
+		Actions.setPageState('NameAgent');
+	},
+
+	handleGameClick: function(gameId, evt) {
+		evt.preventDefault();
+		Actions.connectAndJoinGame(gameId);
+	},
+
+	handleNewGameClick: function(evt) {
+		evt.preventDefault();
+		Actions.connectAndCreateGame();
 	},
 
 	renderGameList: function() {
@@ -38,7 +49,7 @@ const GameList = React.createClass({
 		const games = _.map(this.props.games, (game, index) => {
 			return (
 				<li key={index} className="game">
-					<a onClick={this.handleGameClick}>
+					<a onClick={this.handleGameClick.bind(this, game.id)}>
 						<div className="right">
 							<div className="players">{game.players.length} players</div>
 							<div className="status" />
@@ -57,13 +68,13 @@ const GameList = React.createClass({
 
 	render: function() {
 		return (
-			<div className="gameList page">
+			<div className="menu page">
 				<div className="title">Ohms</div>
 				<div className="player">
 					Welcome agent <a onClick={this.handlePlayerClick}>{this.props.playerName}</a>.
 				</div>
 				<div className="create">
-					<button>Create New Game</button>
+					<button onClick={this.handleNewGameClick}>Create New Game</button>
 				</div>
 				<div className="joinMessage">or join an existing game:</div>
 				{this.renderGameList()}
@@ -73,4 +84,4 @@ const GameList = React.createClass({
 
 });
 
-module.exports = GameList;
+module.exports = Menu;

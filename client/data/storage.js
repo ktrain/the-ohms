@@ -42,6 +42,12 @@ const Storage = {
 		return parsedVal;
 	},
 
+	del: (key) => {
+		const val = Storage.get(key);
+		localStorage.removeItem(key);
+		return val;
+	},
+
 };
 
 module.exports = Storage;
