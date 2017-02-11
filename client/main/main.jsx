@@ -37,8 +37,6 @@ const Main = React.createClass({
 				if (player.gameId) {
 					console.log('player has game ID; connecting');
 					Actions.connectAndJoinGame(player.gameId);
-					console.log('joined game');
-					Actions.setPageState('Game');
 				} else {
 					console.log('no game; going to menu');
 					return Actions.setPageState('Menu');
@@ -50,6 +48,12 @@ const Main = React.createClass({
 			});
 	},
 
+	componentWillReceiveProps: function(nextProps) {
+		if (!this.props.gameState && !!nextProps.gameState) {
+			Actions.setPageState('Game');
+		}
+	},
+
 	renderPage: function() {
 		console.log(this.props);
 		switch (this.props.pageState) {
@@ -57,8 +61,6 @@ const Main = React.createClass({
 				return <NameAgent />;
 			case 'Menu':
 				return <Menu playerName={_.get(this.props.player, 'name')} />;
-			case 'Lobby':
-				return <Lobby />;
 			case 'Game':
 				return <Game state={this.props.gameState} />;
 			default:
