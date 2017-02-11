@@ -23,7 +23,13 @@ const Handler = {
 				logger.debug('No game ID specified; creating new game');
 				return GameService.createGame();
 			}
-			return GameService.getGame(gameId);
+			return GameService.getGame(gameId)
+				.then((g) => {
+					if (!g) {
+						throw new Error(`Specified game does not exist: ${gameId}`);
+					}
+					return g;
+				});
 		})
 		.then((g) => {
 			game = g;
