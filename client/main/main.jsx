@@ -60,7 +60,7 @@ const Main = React.createClass({
 			case 'NameAgent':
 				return <NameAgent />;
 			case 'Menu':
-				return <Menu playerName={_.get(this.props.player, 'name')} />;
+				return <Menu playerName={_.get(this.props.player, 'name')} games={this.props.games} />;
 			case 'Game':
 				return <Game state={this.props.gameState} />;
 			default:

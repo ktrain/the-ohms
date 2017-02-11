@@ -2,6 +2,9 @@
 
 const React = require('react');
 
+// data
+const Actions = require('data/actions');
+
 
 const Lobby = React.createClass({
 
@@ -11,12 +14,18 @@ const Lobby = React.createClass({
 		};
 	},
 
+	handleBackButtonClick: function(evt) {
+		evt.preventDefault();
+		Actions.leaveGame();
+		Actions.setPageState('Menu');
+	},
+
 	render: function() {
 		const gameState = this.props.gameState;
 		return (
 			<div className="lobby">
 				<div className="header">
-					<a className="backButton">&lt;-</a>
+					<a onClick={this.handleBackButtonClick} className="backButton">&lt;-</a>
 					<div className="title">{gameState.name} Lobby</div>
 					<div className="playerCount">{gameState.players.length} players</div>
 				</div>

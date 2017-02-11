@@ -79,7 +79,7 @@ const Actions = {
 	},
 
 	leaveGame: () => {
-		dispatch('SOCKET_GAME_LEAVE');
+		dispatch('SOCKET_DISCONNECT');
 	},
 
 	startGame: () => {

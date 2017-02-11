@@ -24,6 +24,10 @@ const Store = flux.createStore({
 		Storage.del('player');
 	},
 
+	GAMES: (games) => {
+		State.games = games;
+	},
+
 	SOCKET: (socket) => {
 		State.socket = socket;
 		console.log('new socket', State.socket);
@@ -32,6 +36,12 @@ const Store = flux.createStore({
 			State.gameState = event.payload;
 			Store.emitChange();
 		});
+	},
+
+	SOCKET_DISCONNECT: () => {
+		State.socket.disconnect();
+		delete State.socket;
+		delete State.gameState;
 	},
 
 });
