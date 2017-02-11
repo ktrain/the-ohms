@@ -17,21 +17,31 @@ const Handler = {
 		}
 		const gameId = socket.request._query.gameId;
 
+		let game;
+
 		return Promise.resolve().then(() => {
 			if (!gameId) {
 				logger.debug('No game ID specified; creating new game');
 				return GameService.createGame();
 			}
 			return GameService.getGame(gameId);
-		}).then(() => {
+		})
+		.then((g) => {
+			game = g;
 			return Promise.all([
 				Handler.bindOutgoingMessageHandler(socket, playerId),
 				Handler.bindIncomingMessageHandler(socket, playerId),
 			]);
-		}).then((game) => {
-			logger.debug('Adding player connection to game', gameId);
-			return GameService.addPlayerToGame(playerId, gameId)
-			// TODO: check if the error is because the player is already in the game and ignore if so
+		})
+		.then(() => {
+			logger.debug('Adding player connection to game', game.id);
+			return GameService.addPlayerToGame(playerId, game.id)
+		})
+		.catch((err) => {
+			if (game && game.players.length === 0) {
+				GameService.deleteGame(game.id);
+			}
+			throw err;
 		});
 	},
 
