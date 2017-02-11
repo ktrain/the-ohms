@@ -93,7 +93,7 @@ describe('WebSocket server', function() {
 		});
 	});
 
-	it('`startGame` should trigger clientUpdate messages', (done) => {
+	it.skip('`startGame` should trigger clientUpdate messages', (done) => {
 		const events = _.times(players.length, () => null);
 		clients = _.map(players, (player, i) => {
 			return SocketIOClient(socketUrl, { query: `playerId=${player.id}&gameId=${game.id}` });
