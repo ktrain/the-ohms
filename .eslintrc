@@ -1,8 +1,12 @@
 {
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "browser": true
   },
+  "plugins": [
+    "react"
+  ],
   "extends": "eslint:recommended",
   "rules": {
     "indent": [
@@ -17,7 +21,7 @@
       "unix"
     ],
     "no-console": [
-      "error",
+      "off",
     ],
     "no-ex-assign": [
       "off"

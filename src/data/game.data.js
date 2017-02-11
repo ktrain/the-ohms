@@ -83,8 +83,8 @@ const GameDB = {
 			});
 	},
 
-	hasPlayerId: (game, playerId) => {
-		return !!_.find(game.players, (player) => { return player.id === playerId; });
+	getPlayerIndex: (game, playerId) => {
+		return _.findIndex(game.players, (player) => { return player.id === playerId; });
 	},
 
 	doUnderLock: (id, doTheWork) => {
@@ -108,7 +108,6 @@ const GameDB = {
 			throw new Error(`Player must be an object. Received ${JSON.stringify(player)}.`);
 		}
 
-		logger.debug('acquiring lock to add player to game');
 		return GameDB.doUnderLock(id, (game) => {
 			if (!game) {
 				throw new Error('Game does not exist.');
@@ -122,10 +121,12 @@ const GameDB = {
 				throw new Error('Game is full.');
 			}
 
-			const playerAlreadyInGame = GameDB.hasPlayerId(game, player.id);
-			if (!playerAlreadyInGame) {
+			const playerIndex = GameDB.getPlayerIndex(game, player.id);
+			if (playerIndex < 0) {
 				game.players.push(player);
 				logger.debug('PLAYER ADDED');
+			} else {
+				game.players[playerIndex] = player;
 			}
 
 			return GameDB.save(game);
@@ -141,6 +142,11 @@ const GameDB = {
 			game.players = _.filter(game.players, (player) => {
 				return player.id !== playerId;
 			});
+
+			if (game.players.length === 0) {
+				logger.debug('game is empty; destroying', id);
+				return GameDB.destroy(id);
+			}
 
 			return GameDB.save(game);
 		});

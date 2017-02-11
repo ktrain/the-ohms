@@ -11,7 +11,8 @@ router.get('/', (req, res, next) => {
 				list: games,
 				count: games.length,
 			});
-		}).catch(next);
+		})
+		.catch(next);
 });
 
 router.get('/:gameId', (req, res, next) => {
@@ -23,8 +24,9 @@ router.get('/:gameId', (req, res, next) => {
 					gameId: req.params.gameId,
 				});
 			}
-			res.status(200).send({ game: game });
-		}).catch(next);
+			res.status(200).send(game);
+		})
+		.catch(next);
 });
 
 module.exports = router;

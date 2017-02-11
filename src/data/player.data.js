@@ -43,12 +43,12 @@ const PlayerDB = {
 	save: (player) => {
 		const key = PlayerDB.prepareKey(player.id);
 		return Cache.put(key, player)
-			.then((data) => {
+			/*.then((data) => {
 				return Cache.expire(key, config.get('data:player:inactivityExpirySeconds'))
 					.then(() => {
 						return data;
 					});
-			});
+			})*/;
 	},
 
 };

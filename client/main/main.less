@@ -1,0 +1,65 @@
+
+*, *:before, *:after {
+	// suppress tap highlighting
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+
+	// personal preference
+	box-sizing: border-box;
+	vertical-align: top;
+	padding: 0;
+	margin: 0;
+	-webkit-font-smoothing: antialiased;
+}
+
+*:focus {
+	outline: 0;
+}
+
+input {
+	border-radius: 0;
+}
+
+html, body {
+	user-select: none;
+	background-color: @backgroundGrey;
+}
+
+main {
+	color: @textGrey;
+	font-size: @fontSizeBig;
+	text-align: center;
+	padding: 100px;
+	font-family: sans-serif;
+}
+
+button {
+	background-color: transparent;
+	border: @borderWidth solid @textGrey;
+	color: @textGrey;
+	font-size: @fontSizeBig;
+	text-transform: uppercase;
+	padding: 20px 40px;
+	width: 100%;
+}
+
+ul {
+	li {
+		list-style-type: none;
+	}
+}
+
+a:active, button:active {
+	background-color: @textGrey;
+	color: @backgroundGrey;
+}
+
+// colors
+@backgroundGrey: #2a2a2a;
+@textGrey: #e0e0e0;
+@green: #70d771;
+
+@fontSizeBig: 56px;
+@fontSizeMedium: 48px;
+@fontSizeSmall: 40px;
+
+@borderWidth: 5px;

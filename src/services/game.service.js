@@ -43,6 +43,10 @@ const GameService = {
 		});
 	},
 
+	deleteGame: (gameId) => {
+		return GameDB.destroy(gameId);
+	},
+
 	checkGameHasPlayerId: (game, playerId) => {
 		return GameDB.hasPlayer(game, playerId);
 	},

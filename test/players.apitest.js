@@ -25,9 +25,8 @@ describe('/players', () => {
 					})
 					.expect(200)
 					.then((res) => {
-						res.body.should.have.property('player').that.is.an('object');
-						res.body.player.should.have.property('id').that.is.a('string');
-						res.body.player.should.have.property('name').that.is.a('string');
+						res.body.should.have.property('id').that.is.a('string');
+						res.body.should.have.property('name').that.is.a('string');
 					});
 			});
 
@@ -72,9 +71,8 @@ describe('/players', () => {
 						.get(path)
 						.expect(200)
 						.then((res) => {
-							res.body.should.have.property('player');
-							res.body.player.should.have.property('id').that.equals(player.id);
-							res.body.player.should.have.property('name').that.equals(player.name);
+							res.body.should.have.property('id').that.equals(player.id);
+							res.body.should.have.property('name').that.equals(player.name);
 						});
 				});
 

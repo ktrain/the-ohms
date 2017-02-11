@@ -7,10 +7,9 @@ const router = require('express').Router();
 router.post('/', (req, res, next) => {
 	PlayerService.createPlayer(req.body)
 		.then((player) => {
-			res.status(200).send({
-				player: player,
-			});
-		}).catch(next);
+			res.status(200).send(player);
+		})
+		.catch(next);
 });
 
 router.get('/:playerId', (req, res, next) => {
@@ -22,8 +21,9 @@ router.get('/:playerId', (req, res, next) => {
 					playerId: req.params.playerId,
 				});
 			}
-			res.status(200).send({ player: player });
-		});
+			res.status(200).send(player);
+		})
+		.catch(next);
 });
 
 module.exports = router;

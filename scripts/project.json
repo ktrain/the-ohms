@@ -1,0 +1,19 @@
+{
+	"entryPoints": {
+		"main": "./client/main/main.jsx"
+	},
+	"clientDir": "./client",
+	"assets": [],
+	"libs": [
+		"react",
+		"react-dom",
+		"vitreum/headtags",
+		"lodash",
+		"classnames",
+		"pico-flux",
+		"socket.io-client",
+		"superagent",
+		"superagent-promise",
+		"loglevel"
+	]
+}

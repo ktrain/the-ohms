@@ -1,8 +1,8 @@
 {
     "ignore": [
         "test/**",
-        "migrations/**",
-        "scripts/**"
+        "client/main/**",
+        "client/components/**"
     ],
     "dependencies": {
         "unused-ignores": [
