@@ -141,6 +141,10 @@ const GameDB = {
 				throw new Error('Game does not exist.');
 			}
 
+			if (game.state !== 'waiting for players') {
+				throw new Error('Players cannot be removed once a game has started.');
+			}
+
 			game.players = _.filter(game.players, (player) => {
 				return player.id !== playerId;
 			});
@@ -155,7 +159,7 @@ const GameDB = {
 	},
 
 	startGame: (id) => {
-		logger.debug('STARTING GAME', id);
+		logger.info('STARTING GAME', id);
 
 		return GameDB.doUnderLock(id, (game) => {
 			if (!game) {
