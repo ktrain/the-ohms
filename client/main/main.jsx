@@ -70,8 +70,7 @@ const Main = React.createClass({
 			<main>
 				<Headtags.title>The Ohms</Headtags.title>
 				<Headtags.meta name="description" content="Can you resist?" />
-
-				{/*<Headtags.meta name="viewport" content="width=device-width, initial-scale=1" />*/}
+				<Headtags.meta name="viewport" content="width=device-width, initial-scale=1" />
 
 				{this.renderPage()}
 			</main>

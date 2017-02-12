@@ -26,9 +26,9 @@ html, body {
 
 main {
 	color: @textGrey;
-	font-size: @fontSizeBig;
+	font-size: @fontSizeLarge;
 	text-align: center;
-	padding: 100px;
+	padding: @fontSizeLarge;
 	font-family: sans-serif;
 }
 
@@ -36,9 +36,9 @@ button {
 	background-color: transparent;
 	border: @borderWidth solid @textGrey;
 	color: @textGrey;
-	font-size: @fontSizeBig;
+	font-size: @fontSizeMedium;
 	text-transform: uppercase;
-	padding: 20px 40px;
+	padding: @fontSizeMedium/3;
 	width: 100%;
 }
 
@@ -48,6 +48,9 @@ ul {
 	}
 }
 
+a {
+	color: @textGrey;
+}
 a:active, button:active {
 	background-color: @textGrey;
 	color: @backgroundGrey;
@@ -58,8 +61,8 @@ a:active, button:active {
 @textGrey: #e0e0e0;
 @green: #70d771;
 
-@fontSizeBig: 56px;
-@fontSizeMedium: 48px;
-@fontSizeSmall: 40px;
+@fontSizeLarge: 28px;
+@fontSizeMedium: 24px;
+@fontSizeSmall: 18px;
 
-@borderWidth: 5px;
+@borderWidth: 2px;
