@@ -90,6 +90,8 @@ const Handler = {
 			switch (message.type) {
 				case 'leaveGame':
 					return GameHandler.leaveGame(message);
+				case 'kickPlayer':
+					return GameHandler.kickPlayer(message);
 				case 'startGame':
 					return GameHandler.startGame(message);
 				case 'selectTeam':

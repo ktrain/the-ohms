@@ -17,14 +17,21 @@
 	}
 	ul.players {
 		font-size: @fontSizeSmall;
-		li {
+		li.player {
 			text-align: left;
-			padding: @fontSizeLarge 0px;
-			.status {
+			padding: @fontSizeSmall/2 0px;
+			.right {
 				float: right;
+				a {
+					color: red;
+					padding: @fontSizeSmall/3;
+				}
 				&.ready {
 					color: @green;
 				}
+			}
+			.name {
+				text-transform: capitalize;
 			}
 		}
 	}

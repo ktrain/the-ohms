@@ -11,6 +11,7 @@ const Lobby = React.createClass({
 
 	getDefaultProps: function() {
 		return {
+			player: null,
 			gameState: null,
 		};
 	},
@@ -21,11 +22,29 @@ const Lobby = React.createClass({
 		Actions.setPageState('Menu');
 	},
 
+	handleKickClick: function(playerId, evt) {
+		evt.preventDefault();
+		Actions.kickPlayer(playerId);
+	},
+
+	renderPlayerRight: function(playerId) {
+		const players = this.props.gameState.players;
+		const amLeader = (players[0].id === this.props.player.id);
+		if (playerId === players[0].id) {
+			return <div className="right ready">Leader</div>
+		}
+		if (amLeader) {
+			return <div className="right"><a onClick={this.handleKickClick.bind(this, playerId)}>X</a></div>
+		}
+		return <div className="right ready">Ready</div>
+	},
+
 	renderPlayers: function() {
-		return _.map(this.props.gameState.players, (player, index) => {
+		const players = this.props.gameState.players;
+		return _.map(players, (player, index) => {
 			return (
 				<li key={index} className="player">
-					<div className="status ready">Ready</div>
+					{this.renderPlayerRight(player.id)}
 					<div className="name">{player.name}</div>
 				</li>
 			);
