@@ -27,9 +27,7 @@ const Main = React.createClass({
 
 	componentDidMount: function() {
 		if (!this.props.player) {
-			console.log('no player');
-			// go to default NameAgent page
-			return;
+			return Actions.setPageState('NameAgent');
 		}
 		Actions.getPlayer(this.props.player.id)
 			.then((player) => {
@@ -43,8 +41,8 @@ const Main = React.createClass({
 				}
 			})
 			.catch((err) => {
-				console.error(err);
-				return Actions.setPageState('NameAgent');
+				Actions.clearPlayer();
+				Actions.setPageState('NameAgent');
 			});
 	},
 

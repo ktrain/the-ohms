@@ -45,6 +45,10 @@ const Actions = {
 			});
 	},
 
+	clearPlayer: () => {
+		dispatch('PLAYER_CLEAR');
+	},
+
 	getGames: () => {
 		return request
 			.get('/v1/games')

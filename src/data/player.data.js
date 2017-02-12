@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 const config = require('nconf');
+const logger = require('src/util/logger.js')('player');
 
 const Cache = require('src/util/cache.js');
 
@@ -43,12 +44,14 @@ const PlayerDB = {
 	save: (player) => {
 		const key = PlayerDB.prepareKey(player.id);
 		return Cache.put(key, player)
-			/*.then((data) => {
-				return Cache.expire(key, config.get('data:player:inactivityExpirySeconds'))
+			.then((data) => {
+				const expiry = config.get('data:player:expirySeconds');
+				logger.trace('expiring player after', expiry);
+				return Cache.expire(key, expiry)
 					.then(() => {
 						return data;
 					});
-			})*/;
+			});
 	},
 
 };

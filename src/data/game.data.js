@@ -54,7 +54,9 @@ const GameDB = {
 		return Cache.put(key, game)
 			.then((game) => {
 				EventEmitter.emit('game|save', game);
-				return Cache.expire(key, config.get('data:game:inactivityExpirySeconds'))
+				const expiry = config.get('data:game:expirySeconds');
+				logger.trace('expiring game after', expiry);
+				return Cache.expire(key, expiry)
 					.then(() => {
 						return game;
 					});
