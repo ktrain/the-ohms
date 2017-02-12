@@ -18,7 +18,7 @@ const Main = React.createClass({
 
 	getDefaultProps: function() {
 		return {
-			pageState: 'NameAgent',
+			pageState: null,
 			player: null,
 			games: null,
 			gameState: null,
@@ -52,6 +52,12 @@ const Main = React.createClass({
 		}
 	},
 
+	renderLoading: function() {
+		return (
+			<div className="loading page"><i className="fa fa-refresh fa-spin" /></div>
+		);
+	},
+
 	renderPage: function() {
 		switch (this.props.pageState) {
 			case 'NameAgent':
@@ -61,7 +67,7 @@ const Main = React.createClass({
 			case 'Game':
 				return <Game state={this.props.gameState} />;
 			default:
-				throw new Error(`Invalid pageState: ${this.props.pageState}`);
+				return this.renderLoading();
 		}
 	},
 
