@@ -1,3 +1,6 @@
 {
-	"redirectToSSL": true
+	"redirectToSSL": true,
+	"logging": {
+		"defaultLevel": "info"
+	}
 }
