@@ -93,7 +93,7 @@ describe('WebSocket server', function() {
 		});
 	});
 
-	it.skip('`startGame` should trigger clientUpdate messages', (done) => {
+	it('`startGame` should trigger clientUpdate messages', (done) => {
 		const events = _.times(players.length, () => null);
 		clients = _.map(players, (player, i) => {
 			return SocketIOClient(socketUrl, { query: `playerId=${player.id}&gameId=${game.id}` });
@@ -113,14 +113,14 @@ describe('WebSocket server', function() {
 			});
 		});
 		setTimeout(() => {
-			clients[0].emit('message', JSON.stringify({
+			clients[0].emit('message', {
 				version: 1,
 				playerId: players[0].id,
 				type: 'startGame',
 				payload: {
 					gameId: game.id,
 				},
-			}));
+			});
 		}, 1000);
 	});
 
