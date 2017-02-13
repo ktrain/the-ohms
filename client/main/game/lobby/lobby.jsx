@@ -11,6 +11,7 @@ const Lobby = React.createClass({
 
 	getDefaultProps: function() {
 		return {
+			minNumPlayers: 5,
 			player: null,
 			gameState: null,
 		};
@@ -30,6 +31,9 @@ const Lobby = React.createClass({
 	renderPlayerRight: function(playerId) {
 		const players = this.props.gameState.players;
 		const amLeader = (players[0].id === this.props.player.id);
+		if (playerId === this.props.player.id) {
+			return <div className="right ready">You</div>
+		}
 		if (playerId === players[0].id) {
 			return <div className="right ready">Leader</div>
 		}
@@ -51,6 +55,26 @@ const Lobby = React.createClass({
 		});
 	},
 
+	renderStatus: function() {
+		const players = this.props.gameState.players;
+		const amLeader = (players[0].id === this.props.player.id);
+		let content = 'Ready To Start';
+		if (players.length < this.props.minNumPlayers) {
+			content = 'Waiting For Players';
+		} else if (amLeader) {
+			content = <button onClick={this.handleStart}>Start</button>;
+		}
+		const start = (
+			<div className="start">{content}</div>
+		);
+
+		return (
+			<div className="status">
+				{start}
+			</div>
+		);
+	},
+
 	render: function() {
 		const gameState = this.props.gameState;
 		return (
@@ -67,6 +91,7 @@ const Lobby = React.createClass({
 				<ul className="players">
 					{this.renderPlayers()}
 				</ul>
+				{this.renderStatus()}
 			</div>
 		);
 	},
