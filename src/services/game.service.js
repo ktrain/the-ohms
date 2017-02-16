@@ -23,6 +23,9 @@ const GameService = {
 			if (!player) {
 				throw new Error(`Player does not exist (ID ${playerId})`);
 			}
+			if (player.gameId && player.gameId !== gameId) {
+				throw new Error(`Player is already in another game ${player.gameId}`);
+			}
 			return GameDB.addPlayer(gameId, player).then((game) => {
 				return PlayerService.markPlayerInGame(player, gameId).then(() => {
 					return game;
