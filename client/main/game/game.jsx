@@ -14,6 +14,7 @@ const Game = React.createClass({
 
 	getDefaultProps: function() {
 		return {
+			player: null,
 			gameState: null,
 		};
 	},
@@ -22,12 +23,15 @@ const Game = React.createClass({
 		if (!this.props.gameState) {
 			Actions.setPageState('Menu');
 		}
+		if (!this.props.player) {
+			Actions.setPageState('NameAgent');
+		}
 	},
 
 	renderStage: function() {
 		switch (this.props.gameState.state) {
 			case 'waiting for players':
-				return <Lobby gameState={this.props.gameState} />;
+				return <Lobby {...this.props} />
 			default:
 				throw new Error(`Invalid game state: ${this.props.gameState.state}`);
 		}
@@ -48,6 +52,7 @@ module.exports = Store.createSmartComponent(
 	Game,
 	() => {
 		return {
+			player: Store.getPlayer(),
 			gameState: Store.getGameState(),
 		};
 	}

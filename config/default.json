@@ -1,4 +1,5 @@
 {
+	"redirectToSSL": false,
 	"logging": {
 		"defaultLevel": "info"
 	},
@@ -16,10 +17,10 @@
 	},
 	"data": {
 		"player": {
-			"inactivityExpirySeconds": 259200
+			"expirySeconds": 259200
 		},
 		"game": {
-			"inactivityExpirySeconds": 176400
+			"expirySeconds": 176400
 		}
 	},
 	"client": {

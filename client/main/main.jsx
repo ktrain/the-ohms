@@ -18,7 +18,7 @@ const Main = React.createClass({
 
 	getDefaultProps: function() {
 		return {
-			pageState: 'NameAgent',
+			pageState: null,
 			player: null,
 			games: null,
 			gameState: null,
@@ -27,9 +27,7 @@ const Main = React.createClass({
 
 	componentDidMount: function() {
 		if (!this.props.player) {
-			console.log('no player');
-			// go to default NameAgent page
-			return;
+			return Actions.setPageState('NameAgent');
 		}
 		Actions.getPlayer(this.props.player.id)
 			.then((player) => {
@@ -43,8 +41,8 @@ const Main = React.createClass({
 				}
 			})
 			.catch((err) => {
-				console.error(err);
-				return Actions.setPageState('NameAgent');
+				Actions.clearPlayer();
+				Actions.setPageState('NameAgent');
 			});
 	},
 
@@ -52,6 +50,12 @@ const Main = React.createClass({
 		if (!!nextProps.gameState) {
 			Actions.setPageState('Game');
 		}
+	},
+
+	renderLoading: function() {
+		return (
+			<div className="loading page"><i className="fa fa-refresh fa-spin" /></div>
+		);
 	},
 
 	renderPage: function() {
@@ -63,7 +67,7 @@ const Main = React.createClass({
 			case 'Game':
 				return <Game state={this.props.gameState} />;
 			default:
-				throw new Error(`Invalid pageState: ${this.props.pageState}`);
+				return this.renderLoading();
 		}
 	},
 
@@ -72,8 +76,7 @@ const Main = React.createClass({
 			<main>
 				<Headtags.title>The Ohms</Headtags.title>
 				<Headtags.meta name="description" content="Can you resist?" />
-
-				{/*<Headtags.meta name="viewport" content="width=device-width, initial-scale=1" />*/}
+				<Headtags.meta name="viewport" content="width=device-width, initial-scale=1" />
 
 				{this.renderPage()}
 			</main>

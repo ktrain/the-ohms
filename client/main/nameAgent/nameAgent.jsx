@@ -16,7 +16,7 @@ const NameAgentPage = React.createClass({
 
 	getInitialState: function() {
 		return {
-			name: _.get(Store.getPlayer(), 'name'),
+			name: _.get(Store.getPlayer(), 'name') || '',
 		};
 	},
 

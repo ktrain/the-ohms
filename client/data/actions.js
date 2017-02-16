@@ -45,6 +45,10 @@ const Actions = {
 			});
 	},
 
+	clearPlayer: () => {
+		dispatch('PLAYER_CLEAR');
+	},
+
 	getGames: () => {
 		return request
 			.get('/v1/games')
@@ -66,7 +70,7 @@ const Actions = {
 		if (!player) {
 			throw new Error('No player; cannot create a game');
 		}
-		Actions.openSocketConnection('/', { query: `playerId=${player.id}` });
+		Actions.openGameConnection('/', { query: `playerId=${player.id}` });
 	},
 
 	connectAndJoinGame: (gameId) => {
@@ -74,12 +78,12 @@ const Actions = {
 		if (!player) {
 			throw new Error('No player; cannot create a game');
 		}
-		Actions.openSocketConnection('/', { query: `playerId=${player.id}&gameId=${gameId}` });
+		Actions.openGameConnection('/', { query: `playerId=${player.id}&gameId=${gameId}` });
 	},
 
-	openSocketConnection: (url, query) => {
+	openGameConnection: (url, query) => {
 		Messenger.connect(url, query, (event) => {
-			console.log('received message', event);
+			console.log('clientUpdate', event);
 			dispatch('GAME_STATE', event.payload);
 		});
 	},
@@ -89,28 +93,32 @@ const Actions = {
 		dispatch('GAME_LEAVE');
 	},
 
+	kickPlayer: (playerId) => {
+		Messenger.send('kickPlayer', { playerId });
+	},
+
 	startGame: () => {
-		dispatch('SOCKET_GAME_START');
+		Messenger.send('startGame');
 	},
 
 	selectTeam: (team) => {
-		dispatch('SOCKET_TEAM_SELECT', team);
+		Messenger.send('selectTeam', { team });
 	},
 
 	approveTeam: () => {
-		dispatch('SOCKET_TEAM_APPROVE');
+		Messenger.send('approveTeam');
 	},
 
 	rejectTeam: () => {
-		dispatch('SOCKET_TEAM_REJECT');
+		Messenger.send('rejectTeam');
 	},
 
 	succeedMission: () => {
-		dispatch('SOCKET_MISSION_SUCCEED');
+		Messenger.send('succeedMission');
 	},
 
 	failMission: () => {
-		dispatch('SOCKET_MISSION_FAIL');
+		Messenger.send('failMission');
 	},
 
 };

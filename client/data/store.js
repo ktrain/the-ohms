@@ -23,7 +23,7 @@ const Store = flux.createStore({
 		Storage.put('player', player);
 	},
 
-	PLAYER_DELETE: () => {
+	PLAYER_CLEAR: () => {
 		Storage.del('player');
 	},
 

@@ -1,12 +1,15 @@
 
 .lobby {
 	.header {
-		margin-bottom: 80px;
+		margin-bottom: @fontSizeLarge;
 		.left {
-			text-align: left;
+			float: left;
 		}
 		.title {
+			font-size: @fontSizeMedium;
 			text-transform: capitalize;
+			max-width: 80%;
+			margin: 0px auto;
 		}
 		.playerCount {
 			font-size: @fontSizeSmall;
@@ -14,15 +17,28 @@
 	}
 	ul.players {
 		font-size: @fontSizeSmall;
-		li {
+		li.player {
 			text-align: left;
-			padding: 25px 0px;
-			.status {
+			padding: @fontSizeSmall/2 0px;
+			.right {
 				float: right;
+				a {
+					color: red;
+					padding: @fontSizeSmall/3;
+				}
 				&.ready {
 					color: @green;
 				}
 			}
+			.name {
+				text-transform: capitalize;
+			}
+		}
+	}
+	.status {
+		margin-top: 20px;
+		font-size: @fontSizeSmall;
+		.start {
 		}
 	}
 }

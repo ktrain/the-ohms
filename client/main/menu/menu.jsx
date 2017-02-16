@@ -86,6 +86,8 @@ const Menu = React.createClass({
 				<div className="refresh">
 					<button onClick={this.handleRefreshClick}>Refresh</button>
 				</div>
+
+				<footer><a href="https://github.com/ktrain/the-ohms">The code</a></footer>
 			</div>
 		);
 	},

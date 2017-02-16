@@ -9,7 +9,7 @@
 		margin-bottom: 50px;
 		a {
 			text-transform: uppercase;
-			border-bottom: 8px dotted @textGrey;
+			border-bottom: @borderWidth dotted @textGrey;
 		}
 	}
 	.create {
@@ -30,7 +30,7 @@
 			li.game {
 				a {
 					display: block;
-					padding: 30px 0px;
+					padding: @fontSizeSmall/1.5 0px;
 				}
 				.name {
 					text-transform: capitalize;
@@ -42,11 +42,11 @@
 					}
 					.status {
 						display: inline-block;
-						width: 32px;
-						height: 32px;
+						width: @fontSizeMedium/2;
+						height: @fontSizeMedium/2;
 						border-radius: 100%;
 						background-color: @green;
-						margin: 8px 2px 0px 25px;
+						margin: @fontSizeSmall/3 @fontSizeSmall/4 0px @fontSizeSmall/2;
 					}
 				}
 			}
@@ -56,5 +56,10 @@
 		button {
 			margin-top: 30px;
 		}
+	}
+
+	footer {
+		margin-top: 50px;
+		font-size: @fontSizeSmall;
 	}
 }

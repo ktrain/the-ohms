@@ -11,6 +11,8 @@ const Lobby = React.createClass({
 
 	getDefaultProps: function() {
 		return {
+			minNumPlayers: 5,
+			player: null,
 			gameState: null,
 		};
 	},
@@ -21,15 +23,56 @@ const Lobby = React.createClass({
 		Actions.setPageState('Menu');
 	},
 
+	handleKickClick: function(playerId, evt) {
+		evt.preventDefault();
+		Actions.kickPlayer(playerId);
+	},
+
+	renderPlayerRight: function(playerId) {
+		const players = this.props.gameState.players;
+		const amLeader = (players[0].id === this.props.player.id);
+		if (playerId === this.props.player.id) {
+			return <div className="right ready">You</div>
+		}
+		if (playerId === players[0].id) {
+			return <div className="right ready">Leader</div>
+		}
+		if (amLeader) {
+			return <div className="right"><a onClick={this.handleKickClick.bind(this, playerId)}>X</a></div>
+		}
+		return <div className="right ready">Ready</div>
+	},
+
 	renderPlayers: function() {
-		return _.map(this.props.gameState.players, (player, index) => {
+		const players = this.props.gameState.players;
+		return _.map(players, (player, index) => {
 			return (
 				<li key={index} className="player">
-					<div className="status ready">Ready</div>
+					{this.renderPlayerRight(player.id)}
 					<div className="name">{player.name}</div>
 				</li>
 			);
 		});
+	},
+
+	renderStatus: function() {
+		const players = this.props.gameState.players;
+		const amLeader = (players[0].id === this.props.player.id);
+		let content = 'Ready To Start';
+		if (players.length < this.props.minNumPlayers) {
+			content = 'Waiting For Players';
+		} else if (amLeader) {
+			content = <button onClick={this.handleStart}>Start</button>;
+		}
+		const start = (
+			<div className="start">{content}</div>
+		);
+
+		return (
+			<div className="status">
+				{start}
+			</div>
+		);
 	},
 
 	render: function() {
@@ -48,6 +91,7 @@ const Lobby = React.createClass({
 				<ul className="players">
 					{this.renderPlayers()}
 				</ul>
+				{this.renderStatus()}
 			</div>
 		);
 	},

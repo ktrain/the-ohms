@@ -1,0 +1,6 @@
+{
+	"redirectToSSL": true,
+	"logging": {
+		"defaultLevel": "trace"
+	}
+}

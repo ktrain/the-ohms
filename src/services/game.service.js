@@ -1,5 +1,6 @@
 'use strict';
 
+const logger = require('src/util/logger.js')('gameService');
 const GameDB = require('src/data/game.data.js');
 const PlayerService = require('src/services/player.service.js');
 
@@ -30,17 +31,22 @@ const GameService = {
 		});
 	},
 
-	removePlayerFromGame: (playerId) => {
-		return PlayerService.getPlayer(playerId).then((player) => {
-			if (!player.gameId) {
-				throw new Error(`Player ${player.id} is not in a game.`);
-			}
-			return GameDB.removePlayer(player.gameId, player.id).then((game) => {
-				return PlayerService.markPlayerNoGame(player).then(() => {
-					return game;
-				});
+	removePlayerFromGame: (gameId, playerId) => {
+		let game;
+		logger.debug(`Removing player ${playerId} from game ${gameId}`);
+		return GameDB.removePlayer(gameId, playerId)
+			.then((g) => {
+				game = g;
+				return PlayerService.getPlayer(playerId);
+			})
+			.then((player) => {
+				if (player) {
+					return PlayerService.markPlayerNoGame(player);
+				}
+			})
+			.then(() => {
+				return game;
 			});
-		});
 	},
 
 	deleteGame: (gameId) => {

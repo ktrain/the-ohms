@@ -3,12 +3,25 @@
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
-
-const app = express();
+const config = require('nconf');
 
 const logger = require('src/util/logger.js')('routing');
 const routes = require('./routes.js');
 const clientRoutes = require('./client.js');
+
+const app = express();
+
+app.set('trust proxy');
+
+if (config.get('redirectToSSL')) {
+	app.use((req, res, next) => {
+		logger.trace('redirecting to SSL');
+		if (req.header('x-forwarded-proto') !== 'https') {
+			return res.redirect(302, `https://${req.get('Host')}${req.url}`);
+		}
+		next();
+	});
+}
 
 app.use((req, res, next) => {
 	let data = {};
