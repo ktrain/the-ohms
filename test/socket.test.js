@@ -14,6 +14,7 @@ const SocketIOClient = require('socket.io-client');
 const PlayerHelper = require('./helpers/player.helper.js');
 const GameHelper = require('./helpers/game.helper.js');
 const Events = require('src/events.js');
+const GameSetup = require('src/data/game.setup.js');
 
 const port = testing.config.get('port');
 
@@ -25,6 +26,7 @@ describe('WebSocket server', function() {
 	let game;
 	let clients;
 	let socketUrl;
+	let gameSetup;
 
 	before('Clear cache', () => {
 		return testing.clearCache();
@@ -53,7 +55,10 @@ describe('WebSocket server', function() {
 						players[i] = p;
 					});
 			})
-		);
+		)
+			.then(() => {
+				 gameSetup = GameSetup.getGameSetupByNumPlayers(players.length);
+			});
 	});
 
 	beforeEach('Create game', () => {
@@ -93,24 +98,26 @@ describe('WebSocket server', function() {
 		});
 	});
 
-	it('`startGame` should trigger clientUpdate messages', (done) => {
+	it('`startGame` should populate game data', (done) => {
 		const events = _.times(players.length, () => null);
 		clients = _.map(players, (player, i) => {
 			return SocketIOClient(socketUrl, { query: `playerId=${player.id}&gameId=${game.id}` });
 		});
-		_.each(clients, (client, i) => {
-			client.on('clientUpdate', (event) => {
-				should.exist(event);
-				event.should.have.property('type').that.equals('clientUpdate');
-				event.should.have.property('payload').that.is.an('object');
-				event.payload.should.have.property('id').that.equals(game.id);
-				if (event.payload.state === 'selecting team') {
-					events[i] = event;
-					if (_.every(events, (event) => !!event)) {
-						done();
-					}
-				}
-			});
+		clients[0].on('clientUpdate', (event) => {
+			should.exist(event);
+			event.should.have.property('type').that.equals('clientUpdate');
+			event.should.have.property('payload').that.is.an('object');
+			event.payload.should.have.property('id').that.equals(game.id);
+			if (event.payload.state === 'selecting team') {
+				event.payload.should.have.property('spies').with.lengthOf(gameSetup.numSpies);
+				event.payload.should.have.property('currentRoundIndex').that.equals(0);
+				event.payload.should.have.property('currentRound').that.is.an('object');
+				event.payload.currentRound.should.have.property('leaderIndex').that.is.within(0, players.length-1);
+				event.payload.currentRound.should.have.property('team').that.deep.equals([]);
+				event.payload.currentRound.should.have.property('votes').that.deep.equals([]);
+				event.payload.currentRound.should.have.property('mission').that.deep.equals([]);
+				done();
+			}
 		});
 		setTimeout(() => {
 			clients[0].emit('message', {

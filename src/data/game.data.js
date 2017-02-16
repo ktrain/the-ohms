@@ -105,10 +105,12 @@ const GameDB = {
 		});
 	},
 
-	addPlayer: (id, player) => {
-		if (!_.isObject(player)) {
-			throw new Error(`Player must be an object. Received ${JSON.stringify(player)}.`);
+	addPlayer: (id, playerData) => {
+		if (!_.isObject(playerData)) {
+			throw new Error(`Player must be an object. Received ${JSON.stringify(playerData)}.`);
 		}
+
+		const player = _.pick(playerData, ['id', 'name']);
 
 		return GameDB.doUnderLock(id, (game) => {
 			if (!game) {
@@ -177,9 +179,16 @@ const GameDB = {
 			game.state = 'selecting team';
 
 			const setup = GameSetup.getGameSetupByNumPlayers(game.players.length);
-			game.numSpies = setup.numSpies;
+			game.spyIndices = _.sampleSize(_.range(0, game.players.length), setup.numSpies);
+			game.spyIndices.sort();
 			game.rounds = setup.rounds;
 			game.currentRoundIndex = 0;
+			game.currentRound = {
+				leaderIndex: _.random(0, game.players.length-1),
+				team: [],
+				votes: {},
+				mission: {},
+			};
 
 			return GameDB.save(game);
 		});
