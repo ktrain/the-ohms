@@ -17,7 +17,7 @@ module.exports = {
 					next();
 				})
 				.catch((err) => {
-					logger.error(err);
+					logger.error('New Connection Error:', err);
 					next(err);
 				});
 		});

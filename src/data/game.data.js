@@ -117,6 +117,12 @@ const GameDB = {
 				throw new Error('Game does not exist.');
 			}
 
+			const playerIndex = GameDB.getPlayerIndex(game, player.id);
+			if (playerIndex >= 0) {
+				// player is already in this game
+				return GameDB.save(game);
+			}
+
 			if (game.state !== 'waiting for players') {
 				throw new Error('Game has already started.');
 			}
@@ -125,13 +131,8 @@ const GameDB = {
 				throw new Error('Game is full.');
 			}
 
-			const playerIndex = GameDB.getPlayerIndex(game, player.id);
-			if (playerIndex < 0) {
-				game.players.push(player);
-				logger.debug('PLAYER ADDED');
-			} else {
-				game.players[playerIndex] = player;
-			}
+			game.players.push(player);
+			logger.debug('PLAYER ADDED');
 
 			return GameDB.save(game);
 		});
