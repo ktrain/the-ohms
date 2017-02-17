@@ -9,8 +9,8 @@ const should = testing.should;
 const logger = require('src/util/logger.js')('test-socket');
 const express = require('express');
 const SocketIO = require('socket.io');
+const SocketIOClient = require('socket.io-client');
 
-const Messenger = require('client/data/messenger');
 const PlayerHelper = require('./helpers/player.helper.js');
 const GameHelper = require('./helpers/game.helper.js');
 const Events = require('src/events.js');
@@ -19,7 +19,7 @@ const GameSetup = require('src/data/game.setup.js');
 const port = testing.config.get('port');
 
 
-describe('WebSocket tests', function() {
+describe('WebSocket server', function() {
 	this.slow(1500);
 
 	const players = [];
@@ -84,6 +84,7 @@ describe('WebSocket tests', function() {
 		return testing.clearCache();
 	});
 
+
 	it('all clients should receive clientUpdate messages', (done) => {
 		const events = _.times(players.length, () => null);
 		_.each(clients, (client, i) => {
@@ -106,6 +107,7 @@ describe('WebSocket tests', function() {
 			should.exist(event);
 			event.should.have.property('type').that.equals('clientUpdate');
 			event.should.have.property('payload').that.is.an('object');
+			game = event.payload;
 			event.payload.should.have.property('id').that.equals(game.id);
 			if (event.payload.state === 'selecting team') {
 				event.payload.should.have.property('spyIndices').with.lengthOf(gameSetup.numSpies);
@@ -122,20 +124,26 @@ describe('WebSocket tests', function() {
 			version: 1,
 			playerId: players[0].id,
 			type: 'startGame',
-			payload: {
-				gameId: game.id,
-			},
 		});
 	});
 
 	it('`selectTeam` proposes a team', (done) => {
+		console.log('current round', game.currentRound);
 		const leaderIndex = game.currentRound.leaderIndex;
 		clients[leaderIndex].on('clientUpdate', (event) => {
 			if (event.payload.state === 'voting on team') {
 				done();
 			}
 		});
-		clients[leaderIndex].emit('
+		const teamSize = game.rounds[game.currentRoundIndex].teamSize;
+		clients[leaderIndex].emit('message', {
+			version: 1,
+			playerId: players[leaderIndex].id,
+			type: 'selectTeam',
+			payload: {
+				team: _.chain(players).sampleSize(teamSize).map((player) => player.id).value(),
+			},
+		});
 	});
 
 });

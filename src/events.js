@@ -13,7 +13,7 @@ module.exports = {
 			// emit an event to each player socket
 			_.each(gameData.players, (player) => {
 				const clientUpdateEventName = `clientUpdate|${player.id}`;
-				logger.debug('emitting clientUpdate event', clientUpdateEventName);
+				logger.trace('emitting clientUpdate event', clientUpdateEventName);
 				EventEmitter.emit(clientUpdateEventName, {
 					version: 1,
 					type: 'clientUpdate',

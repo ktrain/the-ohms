@@ -74,7 +74,7 @@ const GameService = {
 		logger.debug(`Kicking player ${playerId} from game ${gameId}`);
 		return GameService.getGame(gameId).then((game) => {
 			if (game.players[0].id !== playerId) {
-				throw new Error('Only the oldest player in the game can kick a player');
+				throw new Error('Players can only be kicked by the player who least recently joined the game');
 			}
 			return GameService.removePlayerFromGame(gameId, playerId);
 		});
@@ -113,8 +113,8 @@ const GameService = {
 	startGame: (gameId, playerId) => {
 		logger.debug(`Starting game ${gameId}`);
 		return GameDB.doUnderLock(gameId, (game) => {
-			if (!GameService.gameHasPlayerId(game, playerId)) {
-				throw new Error(`Player ${player.id} is not in game ${game.id}`);
+			if (game.players[0].id !== playerId ) {
+				throw new Error('Game can only be started by the player who least recently joined the game');
 			}
 
 			if (game.state !== 'waiting for players') {
@@ -140,6 +140,36 @@ const GameService = {
             };
 
             return GameDB.save(game);
+		});
+	},
+
+	selectTeam: (gameId, playerId, team) => {
+		return GameDB.doUnderLock(gameId, (game) => {
+			const leaderIndex = _.get(game, 'currentRound.leaderIndex');
+			if (game.players[leaderIndex].id !== playerId) {
+				throw new Error('Only the round leader can select a team');
+			}
+
+			if (game.state !== 'selecting team') {
+				throw new Error('A team can only be selected when the game is in `selecting team` state');
+			}
+
+			const expectedTeamSize = game.rounds[game.currentRoundIndex].teamSize;
+			if (team.length !== expectedTeamSize) {
+				throw new Error(`Invalid team: must have ${expectedTeamSize} players this round`);
+			}
+
+			_.each(team, (playerId) => {
+				const playerIndex = GameService.getPlayerIndex(game, playerId);
+				if (playerIndex < 0) {
+					throw new Error(`Invalid team: player ${playerId} is not in the game`);
+				}
+			});
+
+			game.currentRound.team = team;
+			game.state = 'voting on team';
+
+			return GameDB.save(game);
 		});
 	},
 

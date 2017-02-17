@@ -52,10 +52,10 @@ const GameHandler = {
 	},
 
 	selectTeam: (message) => {
-		if (!message.team) {
-			return Promise.reject(new Error('`selectTeam` message requires `team`.'));
+		if (!_.isArray(_.get(message, 'payload.team'))) {
+			return Promise.reject(new Error('`selectTeam` message requires `payload.team` (array)'));
 		}
-		return GameService.selectTeam(message.gameId, message.playerId, message.team);
+		return GameService.selectTeam(message.gameId, message.playerId, message.payload.team);
 	},
 
 	approveTeam: (message) => {
@@ -63,12 +63,15 @@ const GameHandler = {
 	},
 
 	rejectTeam: (message) => {
+		return GameService.rejectTeam(message.gameId, message.playerId);
 	},
 
 	succeedMission: (message) => {
+		return GameService.succeedMission(message.gameId, message.playerId);
 	},
 
 	failMission: (message) => {
+		return GameService.failMission(message.gameId, message.playerId);
 	},
 
 };
