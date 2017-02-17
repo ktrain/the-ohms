@@ -47,7 +47,7 @@ describe('WebSocket server', function() {
 		Events.setUpSubscriptions();
 	});
 
-	before('Create players', () => {
+	beforeEach('Create players', () => {
 		return Promise.all(
 			_.times(10, (i) => {
 				return PlayerHelper.createPlayer()
@@ -109,13 +109,13 @@ describe('WebSocket server', function() {
 			event.should.have.property('payload').that.is.an('object');
 			event.payload.should.have.property('id').that.equals(game.id);
 			if (event.payload.state === 'selecting team') {
-				event.payload.should.have.property('spies').with.lengthOf(gameSetup.numSpies);
+				event.payload.should.have.property('spyIndices').with.lengthOf(gameSetup.numSpies);
 				event.payload.should.have.property('currentRoundIndex').that.equals(0);
 				event.payload.should.have.property('currentRound').that.is.an('object');
 				event.payload.currentRound.should.have.property('leaderIndex').that.is.within(0, players.length-1);
 				event.payload.currentRound.should.have.property('team').that.deep.equals([]);
-				event.payload.currentRound.should.have.property('votes').that.deep.equals([]);
-				event.payload.currentRound.should.have.property('mission').that.deep.equals([]);
+				event.payload.currentRound.should.have.property('votes').that.deep.equals({});
+				event.payload.currentRound.should.have.property('mission').that.deep.equals({});
 				done();
 			}
 		});

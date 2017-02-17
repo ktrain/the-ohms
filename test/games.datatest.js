@@ -49,7 +49,7 @@ describe('Game Service', () => {
 	describe('#addPlayerToGame', () => {
 
 		it('should add the player to the players array', () => {
-			return GameService.addPlayerToGame(players[0].id, game.id)
+			return GameService.addPlayerToGame(game.id, players[0].id)
 				.then((game) => {
 					should.exist(game);
 					game.should.have.property('players').that.deep.includes.members([players[0]]);
@@ -57,7 +57,7 @@ describe('Game Service', () => {
 		});
 
 		it('should mark the player in the cache with the game ID', () => {
-			return GameService.addPlayerToGame(players[0].id, game.id)
+			return GameService.addPlayerToGame(game.id, players[0].id)
 				.then(() => {
 					return PlayerService.getPlayer(players[0].id);
 				}).then((player) => {
@@ -73,13 +73,13 @@ describe('Game Service', () => {
 		beforeEach('Add players to game', () => {
 			return Promise.all(
 				_.map(players, (player) => {
-					return GameService.addPlayerToGame(player.id, game.id);
+					return GameService.addPlayerToGame(game.id, player.id)
 				})
 			);
 		});
 
 		it('should remove the player from the players array', () => {
-			return GameService.removePlayerFromGame(players[0].id, game.id)
+			return GameService.removePlayerFromGame(game.id, players[0].id)
 				.then((game) => {
 					should.exist(game);
 					game.should.have.property('players');
@@ -88,7 +88,7 @@ describe('Game Service', () => {
 		});
 
 		it('should clear the game ID from the player in cache', () => {
-			return GameService.removePlayerFromGame(players[0].id, game.id)
+			return GameService.removePlayerFromGame(game.id, players[0].id)
 				.then(() => {
 					return PlayerService.getPlayer(players[0].id);
 				}).then((player) => {
@@ -99,8 +99,8 @@ describe('Game Service', () => {
 
 		it('removing the last player should delete the game', () => {
 			return Promise.all([
-				GameService.removePlayerFromGame(players[0].id, game.id),
-				GameService.removePlayerFromGame(players[1].id, game.id),
+				GameService.removePlayerFromGame(game.id, players[0].id),
+				GameService.removePlayerFromGame(game.id, players[1].id),
 			])
 				.then(() => {
 					return GameService.getGame(game.id);
