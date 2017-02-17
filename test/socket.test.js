@@ -9,8 +9,8 @@ const should = testing.should;
 const logger = require('src/util/logger.js')('test-socket');
 const express = require('express');
 const SocketIO = require('socket.io');
-const SocketIOClient = require('socket.io-client');
 
+const Messenger = require('client/data/messenger');
 const PlayerHelper = require('./helpers/player.helper.js');
 const GameHelper = require('./helpers/game.helper.js');
 const Events = require('src/events.js');
@@ -19,7 +19,7 @@ const GameSetup = require('src/data/game.setup.js');
 const port = testing.config.get('port');
 
 
-describe('WebSocket server', function() {
+describe('WebSocket tests', function() {
 	this.slow(1500);
 
 	const players = [];
@@ -47,7 +47,14 @@ describe('WebSocket server', function() {
 		Events.setUpSubscriptions();
 	});
 
-	beforeEach('Create players', () => {
+	before('Create game', () => {
+		return GameHelper.createGame()
+			.then((g) => {
+				game = g;
+			});
+	});
+
+	before('Create players', () => {
 		return Promise.all(
 			_.times(10, (i) => {
 				return PlayerHelper.createPlayer()
@@ -61,16 +68,15 @@ describe('WebSocket server', function() {
 			});
 	});
 
-	beforeEach('Create game', () => {
-		return GameHelper.createGame()
-			.then((g) => {
-				game = g;
-			});
+	before('Connect clients', () => {
+		clients = _.map(players, (player, i) => {
+			return SocketIOClient(socketUrl, { query: `playerId=${player.id}&gameId=${game.id}` });
+		});
 	});
 
-	afterEach('Disconnect clients', () => {
+	afterEach('Clear client bindings', () => {
 		_.each(clients, (client) => {
-			client.disconnect();
+			client.removeAllListeners();
 		});
 	});
 
@@ -80,9 +86,6 @@ describe('WebSocket server', function() {
 
 	it('all clients should receive clientUpdate messages', (done) => {
 		const events = _.times(players.length, () => null);
-		clients = _.map(players, (player, i) => {
-			return SocketIOClient(socketUrl, { query: `playerId=${player.id}&gameId=${game.id}` });
-		});
 		_.each(clients, (client, i) => {
 			// set up clientUpdate listener
 			client.on('clientUpdate', (event) => {
@@ -99,10 +102,6 @@ describe('WebSocket server', function() {
 	});
 
 	it('`startGame` should populate game data', (done) => {
-		const events = _.times(players.length, () => null);
-		clients = _.map(players, (player, i) => {
-			return SocketIOClient(socketUrl, { query: `playerId=${player.id}&gameId=${game.id}` });
-		});
 		clients[0].on('clientUpdate', (event) => {
 			should.exist(event);
 			event.should.have.property('type').that.equals('clientUpdate');
@@ -119,16 +118,24 @@ describe('WebSocket server', function() {
 				done();
 			}
 		});
-		setTimeout(() => {
-			clients[0].emit('message', {
-				version: 1,
-				playerId: players[0].id,
-				type: 'startGame',
-				payload: {
-					gameId: game.id,
-				},
-			});
-		}, 1000);
+		clients[0].emit('message', {
+			version: 1,
+			playerId: players[0].id,
+			type: 'startGame',
+			payload: {
+				gameId: game.id,
+			},
+		});
+	});
+
+	it('`selectTeam` proposes a team', (done) => {
+		const leaderIndex = game.currentRound.leaderIndex;
+		clients[leaderIndex].on('clientUpdate', (event) => {
+			if (event.payload.state === 'voting on team') {
+				done();
+			}
+		});
+		clients[leaderIndex].emit('
 	});
 
 });
