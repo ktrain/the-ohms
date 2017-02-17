@@ -85,15 +85,17 @@ const GameDB = {
 			});
 	},
 
-	getPlayerIndex: (game, playerId) => {
-		return _.findIndex(game.players, (player) => { return player.id === playerId; });
-	},
-
 	doUnderLock: (id, doTheWork) => {
 		const key = GameDB.prepareKey(id);
 
 		return Cache.acquireLock(key).then((lock) => {
 			return GameDB.get(id)
+				.then((game) => {
+					if (!game) {
+						throw new Error(`Game ${id} does not exist`);
+					}
+					return game;
+				})
 				.then(doTheWork)
 				.catch((err) => {
 					lock.unlock();
@@ -102,96 +104,6 @@ const GameDB = {
 					lock.unlock();
 					return res;
 				});
-		});
-	},
-
-	addPlayer: (id, playerData) => {
-		if (!_.isObject(playerData)) {
-			throw new Error(`Player must be an object. Received ${JSON.stringify(playerData)}.`);
-		}
-
-		const player = PlayerDB.build(playerData);
-
-		return GameDB.doUnderLock(id, (game) => {
-			if (!game) {
-				throw new Error('Game does not exist.');
-			}
-
-			const playerIndex = GameDB.getPlayerIndex(game, player.id);
-			if (playerIndex >= 0) {
-				// player is already in this game
-				return GameDB.save(game);
-			}
-
-			if (game.state !== 'waiting for players') {
-				throw new Error('Game has already started.');
-			}
-
-			if (game.players.length >= GameSetup.getMaxNumPlayers()) {
-				throw new Error('Game is full.');
-			}
-
-			game.players.push(player);
-			logger.debug('PLAYER ADDED');
-
-			return GameDB.save(game);
-		});
-	},
-
-	removePlayer: (id, playerId) => {
-		return GameDB.doUnderLock(id, (game) => {
-			if (!game) {
-				throw new Error('Game does not exist.');
-			}
-
-			if (game.state !== 'waiting for players') {
-				throw new Error('Players cannot be removed once a game has started.');
-			}
-
-			game.players = _.filter(game.players, (player) => {
-				return player.id !== playerId;
-			});
-
-			if (game.players.length === 0) {
-				logger.debug('game is empty; destroying', id);
-				return GameDB.destroy(id);
-			}
-
-			return GameDB.save(game);
-		});
-	},
-
-	startGame: (id) => {
-		logger.info('STARTING GAME', id);
-
-		return GameDB.doUnderLock(id, (game) => {
-			if (!game) {
-				throw new Error('Game does not exist.');
-			}
-
-			if (game.state !== 'waiting for players') {
-				throw new Error('Game has already started.');
-			}
-
-			if (game.players.length < GameSetup.getMinNumPlayers()) {
-				throw new Error(`Cannot start without at least ${GameSetup.getMinNumPlayers()} players`);
-			}
-
-			game.state = 'selecting team';
-
-			const setup = GameSetup.getGameSetupByNumPlayers(game.players.length);
-			game.spyIndices = _.sampleSize(_.range(0, game.players.length), setup.numSpies);
-			game.spyIndices.sort();
-			game.rounds = setup.rounds;
-			game.currentRoundIndex = 0;
-			game.currentRound = {
-				leaderIndex: _.random(0, game.players.length-1),
-				team: [],
-				votes: {},
-				mission: {},
-			};
-
-			return GameDB.save(game);
 		});
 	},
 
