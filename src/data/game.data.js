@@ -9,6 +9,7 @@ const logger = require('src/util/logger.js')('game');
 const EventEmitter = require('src/util/eventEmitter.js');
 const Cache = require('src/util/cache.js');
 
+const PlayerDB = require('./player.data.js');
 const GameSetup = require('./game.setup.js');
 
 const GameDB = {
@@ -78,10 +79,9 @@ const GameDB = {
 
 	destroy: (id) => {
 		const key = GameDB.prepareKey(id);
-		return Cache.getAndDel(key)
-			.then((game) => {
-				EventEmitter.emit('game|delete', game);
-				return game;
+		return Cache.del(key)
+			.then(() => {
+				return null;
 			});
 	},
 
@@ -110,7 +110,7 @@ const GameDB = {
 			throw new Error(`Player must be an object. Received ${JSON.stringify(playerData)}.`);
 		}
 
-		const player = _.pick(playerData, ['id', 'name']);
+		const player = PlayerDB.build(playerData);
 
 		return GameDB.doUnderLock(id, (game) => {
 			if (!game) {

@@ -21,16 +21,6 @@ module.exports = {
 				});
 			});
 		});
-		EventEmitter.on('game|delete', (gameData) => {
-			logger.debug('game|delete', gameData);
-			// emit an event to each player socket
-			_.each(gameData.player, (player) => {
-				EventEmitter.emit(`clientUpdate|${player.id}`, {
-					version: 1,
-					type: 'gameDeleted'
-				});
-			});
-		});
 		logger.info('Subscribed to game events');
 	},
 };
