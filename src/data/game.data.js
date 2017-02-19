@@ -32,6 +32,8 @@ const GameDB = {
 				name: name,
 				state: 'waiting for players',
 				players: [],
+				numSuccesses: 0,
+				numFails: 0,
 			};
 		});
 	},
