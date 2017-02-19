@@ -8,6 +8,7 @@ const Store = require('data/store');
 
 // components
 const Lobby = require('./lobby/lobby.jsx');
+const SelectTeam = require('./selectTeam/selectTeam.jsx');
 
 
 const Game = React.createClass({
@@ -15,12 +16,12 @@ const Game = React.createClass({
 	getDefaultProps: function() {
 		return {
 			player: null,
-			gameState: null,
+			game: null,
 		};
 	},
 
 	componentDidMount: function() {
-		if (!this.props.gameState) {
+		if (!this.props.game) {
 			Actions.setPageState('Menu');
 		}
 		if (!this.props.player) {
@@ -29,11 +30,13 @@ const Game = React.createClass({
 	},
 
 	renderStage: function() {
-		switch (this.props.gameState.state) {
+		switch (this.props.game.state) {
 			case 'waiting for players':
-				return <Lobby {...this.props} />
+				return <Lobby {...this.props} />;
+			case 'selecting team':
+				return <SelectTeam {...this.props} />;
 			default:
-				throw new Error(`Invalid game state: ${this.props.gameState.state}`);
+				throw new Error(`Invalid game state: ${this.props.game.state}`);
 		}
 	},
 
@@ -48,12 +51,4 @@ const Game = React.createClass({
 
 });
 
-module.exports = Store.createSmartComponent(
-	Game,
-	() => {
-		return {
-			player: Store.getPlayer(),
-			gameState: Store.getGameState(),
-		};
-	}
-);
+module.exports = Game;

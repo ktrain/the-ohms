@@ -11,9 +11,9 @@ const Lobby = React.createClass({
 
 	getDefaultProps: function() {
 		return {
-			minNumPlayers: 5,
+			minNumPlayers: 2,
 			player: null,
-			gameState: null,
+			game: null,
 		};
 	},
 
@@ -28,23 +28,29 @@ const Lobby = React.createClass({
 		Actions.kickPlayer(playerId);
 	},
 
+	handleStartClick: function(evt) {
+		evt.preventDefault();
+		Actions.startGame();
+	},
+
 	renderPlayerRight: function(playerId) {
-		const players = this.props.gameState.players;
-		const amLeader = (players[0].id === this.props.player.id);
-		if (playerId === this.props.player.id) {
+		const game = this.props.game;
+		const leader = game.getLeaderId();
+
+		if (playerId === game.playerId) {
 			return <div className="right ready">You</div>
 		}
-		if (playerId === players[0].id) {
-			return <div className="right ready">Leader</div>
-		}
-		if (amLeader) {
+		if (game.amLeader()) {
 			return <div className="right"><a onClick={this.handleKickClick.bind(this, playerId)}>X</a></div>
+		}
+		if (playerId === leader.id) {
+			return <div className="right ready">Leader</div>
 		}
 		return <div className="right ready">Ready</div>
 	},
 
 	renderPlayers: function() {
-		const players = this.props.gameState.players;
+		const players = this.props.game.players;
 		return _.map(players, (player, index) => {
 			return (
 				<li key={index} className="player">
@@ -56,13 +62,13 @@ const Lobby = React.createClass({
 	},
 
 	renderStatus: function() {
-		const players = this.props.gameState.players;
+		const players = this.props.game.players;
 		const amLeader = (players[0].id === this.props.player.id);
 		let content = 'Ready To Start';
 		if (players.length < this.props.minNumPlayers) {
 			content = 'Waiting For Players';
 		} else if (amLeader) {
-			content = <button onClick={this.handleStart}>Start</button>;
+			content = <button onClick={this.handleStartClick}>Start</button>;
 		}
 		const start = (
 			<div className="start">{content}</div>
@@ -76,7 +82,6 @@ const Lobby = React.createClass({
 	},
 
 	render: function() {
-		const gameState = this.props.gameState;
 		return (
 			<div className="lobby">
 				<div className="header">
@@ -85,8 +90,8 @@ const Lobby = React.createClass({
 							<i className="fa fa-arrow-left" />
 						</a>
 					</div>
-					<div className="title">{gameState.name} Lobby</div>
-					<div className="playerCount">{gameState.players.length} players</div>
+					<div className="title">{this.props.game.name} Lobby</div>
+					<div className="playerCount">{this.props.game.players.length} players</div>
 				</div>
 				<ul className="players">
 					{this.renderPlayers()}
