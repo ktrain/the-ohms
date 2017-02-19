@@ -13,6 +13,10 @@ const PlayerDB = {
 		return `player-${id}`;
 	},
 
+	getKeyPattern: () => {
+		return 'player-*';
+	},
+
 	prepareNewData: (data) => {
 		const newData = _.clone(data);
 		newData.id = data.id || uuid.v4();
