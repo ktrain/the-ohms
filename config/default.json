@@ -10,9 +10,9 @@
 		"db": 0,
 		"locking": {
 			"driftFactor": 0.01,
-			"retryCount": 10,
-			"retryDelay": 100,
-			"lockTTLms": 50
+			"retryCount": 100,
+			"retryDelay": 12,
+			"lockTTLms": 10
 		}
 	},
 	"data": {
