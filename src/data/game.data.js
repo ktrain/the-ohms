@@ -9,8 +9,6 @@ const logger = require('src/util/logger.js')('game');
 const EventEmitter = require('src/util/eventEmitter.js');
 const Cache = require('src/util/cache.js');
 
-const PlayerDB = require('./player.data.js');
-const GameSetup = require('./game.setup.js');
 
 const GameDB = {
 

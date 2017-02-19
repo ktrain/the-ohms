@@ -36,7 +36,7 @@ const GameHandler = {
 				return GameHandler.failMission(message);
 		}
 
-		return reject(new Error(`Incoming message has unknown type: ${JSON.stringify(message)}`));
+		return Promise.reject(new Error(`Incoming message has unknown type: ${JSON.stringify(message)}`));
 	},
 
 	leaveGame: (message) => {
@@ -44,34 +44,34 @@ const GameHandler = {
 	},
 
 	kickPlayer: (message) => {
-		return GameService.kickPlayerFromGame(message.gameId, message.playerId);
+		return GameService.PlayerActions.kickPlayerFromGame(message.gameId, message.playerId);
 	},
 
 	startGame: (message) => {
-		return GameService.startGame(message.gameId, message.playerId);
+		return GameService.PlayerActions.startGame(message.gameId, message.playerId);
 	},
 
 	selectTeam: (message) => {
 		if (!_.isArray(_.get(message, 'payload.team'))) {
 			return Promise.reject(new Error('`selectTeam` message requires `payload.team` (array)'));
 		}
-		return GameService.selectTeam(message.gameId, message.playerId, message.payload.team);
+		return GameService.PlayerActions.selectTeam(message.gameId, message.playerId, message.payload.team);
 	},
 
 	approveTeam: (message) => {
-		return GameService.approveTeam(message.gameId, message.playerId);
+		return GameService.PlayerActions.submitTeamVoteApprove(message.gameId, message.playerId);
 	},
 
 	rejectTeam: (message) => {
-		return GameService.rejectTeam(message.gameId, message.playerId);
+		return GameService.PlayerActions.submitTeamVoteReject(message.gameId, message.playerId);
 	},
 
 	succeedMission: (message) => {
-		return GameService.succeedMission(message.gameId, message.playerId);
+		return GameService.PlayerActions.succeedMission(message.gameId, message.playerId);
 	},
 
 	failMission: (message) => {
-		return GameService.failMission(message.gameId, message.playerId);
+		return GameService.PlayerActions.failMission(message.gameId, message.playerId);
 	},
 
 };

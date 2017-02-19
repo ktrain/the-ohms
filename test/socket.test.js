@@ -111,12 +111,15 @@ describe('WebSocket server', function() {
 			event.payload.should.have.property('id').that.equals(game.id);
 			if (event.payload.state === 'selecting team') {
 				event.payload.should.have.property('spyIndices').with.lengthOf(gameSetup.numSpies);
-				event.payload.should.have.property('currentRoundIndex').that.equals(0);
-				event.payload.should.have.property('currentRound').that.is.an('object');
-				event.payload.currentRound.should.have.property('leaderIndex').that.is.within(0, players.length-1);
-				event.payload.currentRound.should.have.property('team').that.deep.equals([]);
-				event.payload.currentRound.should.have.property('votes').that.deep.equals({});
-				event.payload.currentRound.should.have.property('mission').that.deep.equals({});
+				event.payload.should.have.property('roundIndex').that.equals(0);
+				event.payload.should.have.property('rounds').that.is.an('array').with.lengthOf(5);
+
+				const currentRound = event.payload.rounds[0];
+				currentRound.should.be.an('object');
+				currentRound.should.have.property('leaderIndex').that.is.within(0, players.length-1);
+				currentRound.should.have.property('team').that.deep.equals([]);
+				currentRound.should.have.property('votes').that.deep.equals({});
+				currentRound.should.have.property('mission').that.deep.equals({});
 				done();
 			}
 		});
@@ -128,14 +131,14 @@ describe('WebSocket server', function() {
 	});
 
 	it('`selectTeam` proposes a team', (done) => {
-		console.log('current round', game.currentRound);
-		const leaderIndex = game.currentRound.leaderIndex;
+		const currentRound = game.rounds[game.roundIndex];
+		const leaderIndex = currentRound.leaderIndex;
 		clients[leaderIndex].on('clientUpdate', (event) => {
 			if (event.payload.state === 'voting on team') {
 				done();
 			}
 		});
-		const teamSize = game.rounds[game.currentRoundIndex].teamSize;
+		const teamSize = currentRound.teamSize;
 		clients[leaderIndex].emit('message', {
 			version: 1,
 			playerId: players[leaderIndex].id,
