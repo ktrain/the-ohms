@@ -3,6 +3,7 @@
 const _ = require('lodash');
 const logger = require('src/util/logger.js')('gameService');
 
+const EventEmitter = require('src/util/eventEmitter.js');
 const GameSetup = require('src/data/game.setup.js');
 const GameDB = require('src/data/game.data.js');
 const PlayerService = require('src/services/player.service.js');
@@ -47,6 +48,10 @@ const GameService = {
 			}
 
 			return GameDB.doUnderLock(gameId, (game) => {
+				if (game.state !== 'waiting for players') {
+					throw new Error('Players cannot leave a game once it has started');
+				}
+
 				const playerIndex = GameService.getPlayerIndex(game, playerId);
 				if (playerIndex >= 0) {
 					// player is already in this game
@@ -67,9 +72,8 @@ const GameService = {
 				return GameDB.save(game);
 			})
 			.then((game) => {
-				return PlayerService.markPlayerInGame(player, gameId).then(() => {
-					return game;
-				});
+				EventEmitter.emit('game|playerJoin', game, playerId);
+				return game;
 			});
 		});
 	},
@@ -89,13 +93,8 @@ const GameService = {
 			return GameDB.save(game);
 		})
 		.then((game) => {
-			return PlayerService.getPlayer(playerId)
-				.then((player) => {
-					return PlayerService.markPlayerNoGame(player);
-				})
-				.then(() => {
-					return game;
-				});
+			EventEmitter.emit('game|playerLeave', game, playerId);
+			return game;
 		});
 	},
 

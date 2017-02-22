@@ -11,19 +11,16 @@ const ActionService = {
 
 	leaveGame: (gameId, playerId) => {
 		logger.debug(`${playerId} leaving game ${gameId}`);
-		if (game.state !== 'waiting for players') {
-			throw new Error('Players cannot leave a game once it has started');
-		}
 		return GameService.removePlayerFromGame(gameId, playerId);
 	},
 
-	kickPlayerFromGame: (gameId, playerId) => {
-		logger.debug(`Kicking player ${playerId} from game ${gameId}`);
+	kickPlayerFromGame: (gameId, kickerId, kickeeId) => {
+		logger.debug(`Kicking player ${kickeeId} from game ${gameId}`);
 		return GameService.getGame(gameId).then((game) => {
-			if (game.players[0].id !== playerId) {
+			if (game.players[0].id !== kickerId) {
 				throw new Error('Players can only be kicked by the player who least recently joined the game');
 			}
-			return GameService.removePlayerFromGame(gameId, playerId);
+			return GameService.removePlayerFromGame(gameId, kickeeId);
 		});
 	},
 
@@ -129,7 +126,7 @@ const ActionService = {
 	},
 
 	submitMissionSucceed: (gameId, playerId) => {
-		return ActionServer.submitMissionAction(true);
+		return ActionService.submitMissionAction(true);
 	},
 
 	submitMissionFail: (gameId, playerId) => {

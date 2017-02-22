@@ -43,10 +43,6 @@ describe('WebSocket server', function() {
 		});
 	});
 
-	before('Set up subscriptions', () => {
-		Events.setUpSubscriptions();
-	});
-
 	before('Create game', () => {
 		return GameHelper.createGame()
 			.then((g) => {

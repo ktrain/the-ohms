@@ -44,7 +44,7 @@ const GameHandler = {
 	},
 
 	kickPlayer: (message) => {
-		return ActionService.kickPlayerFromGame(message.gameId, message.playerId);
+		return ActionService.kickPlayerFromGame(message.gameId, message.playerId, message.payload.playerId);
 	},
 
 	startGame: (message) => {

@@ -66,6 +66,9 @@ describe('Game Service', () => {
 		it('should mark the player in the cache with the game ID', () => {
 			return GameService.addPlayerToGame(game.id, players[0].id)
 				.then(() => {
+					// give time for the event emitter to fire
+					return new Promise(resolve => setTimeout(resolve, 150));
+				}).then(() => {
 					return PlayerService.getPlayer(players[0].id);
 				}).then((player) => {
 					should.exist(player);
@@ -97,6 +100,9 @@ describe('Game Service', () => {
 		it('should clear the game ID from the player in cache', () => {
 			return GameService.removePlayerFromGame(game.id, players[0].id)
 				.then(() => {
+					// give time for the event emitter to fire
+					return new Promise(resolve => setTimeout(resolve, 150));
+				}).then(() => {
 					return PlayerService.getPlayer(players[0].id);
 				}).then((player) => {
 					should.exist(player);
