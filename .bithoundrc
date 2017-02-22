@@ -14,8 +14,5 @@
             "mocha-junit-reporter",
             "nodemon"
         ]
-    },
-    "critics": {
-        "wc": { "limit": 400 }
     }
 }
