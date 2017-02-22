@@ -30,10 +30,9 @@ describe('Game Service', () => {
 	let game;
 
 	beforeEach('Create players', () => {
-		return Promise.all([
-			PlayerHelper.createPlayer(),
-			PlayerHelper.createPlayer(),
-		])
+		return Promise.all(
+			_.times(10, () => PlayerHelper.createPlayer())
+		)
 			.then((ps) => {
 				players = ps;
 			});
@@ -44,6 +43,14 @@ describe('Game Service', () => {
 			.then((g) => {
 				game = g;
 			});
+	});
+
+	afterEach('Clear games', () => {
+		return GameHelper.clearGames();
+	});
+
+	afterEach('Clear players', () => {
+		return PlayerHelper.clearPlayers();
 	});
 
 	describe('#addPlayerToGame', () => {
@@ -97,11 +104,12 @@ describe('Game Service', () => {
 				});
 		});
 
-		it('removing the last player should delete the game', () => {
-			return Promise.all([
-				GameService.removePlayerFromGame(game.id, players[0].id),
-				GameService.removePlayerFromGame(game.id, players[1].id),
-			])
+		it('delete the game when the last player is removed', () => {
+			return Promise.all(
+				_.map(players, (player) => {
+					return GameService.removePlayerFromGame(game.id, player.id);
+				})
+			)
 				.then(() => {
 					return GameService.getGame(game.id);
 				})
