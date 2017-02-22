@@ -27,7 +27,7 @@
 		"logLevel": "debug"
 	},
 	"gameSetup": {
-		5: {
+		"5": {
 			"numSpies": 2,
 			"rounds": [
 				{ "teamSize": 2, "numFailsRequired": 1 },
@@ -37,7 +37,7 @@
 				{ "teamSize": 3, "numFailsRequired": 1 }
 			]
 		},
-		6: {
+		"6": {
 			"numSpies": 2,
 			"rounds": [
 				{ "teamSize": 2, "numFailsRequired": 1 },
@@ -47,7 +47,7 @@
 				{ "teamSize": 4, "numFailsRequired": 1 }
 			]
 		},
-		7: {
+		"7": {
 			"numSpies": 3,
 			"rounds": [
 				{ "teamSize": 2, "numFailsRequired": 1 },
@@ -57,7 +57,7 @@
 				{ "teamSize": 4, "numFailsRequired": 1 }
 			]
 		},
-		8: {
+		"8": {
 			"numSpies": 3,
 			"rounds": [
 				{ "teamSize": 3, "numFailsRequired": 1 },
@@ -67,7 +67,7 @@
 				{ "teamSize": 5, "numFailsRequired": 1 }
 			]
 		},
-		9: {
+		"9": {
 			"numSpies": 3,
 			"rounds": [
 				{ "teamSize": 3, "numFailsRequired": 1 },
@@ -77,7 +77,7 @@
 				{ "teamSize": 5, "numFailsRequired": 1 }
 			]
 		},
-		10: {
+		"10": {
 			"numSpies": 4,
 			"rounds": [
 				{ "teamSize": 3, "numFailsRequired": 1 },

@@ -5,11 +5,16 @@ const config = require('nconf');
 
 const SetupData = config.get('gameSetup');
 
+// parse the number keys (they have to be strings in JSON)
+const numberizedKeys = _.map(_.keys(SetupData), (key) => parseInt(key));
+const minNumPlayers = _.min(numberizedKeys);
+const maxNumPlayers = _.max(numberizedKeys);
+
 
 const GameSetup = {
 
-	getMinNumPlayers: () => _.min(_.keys(SetupData));
-	getMaxNumPlayers: () => _.max(_.keys(SetupData));
+	getMinNumPlayers: () => minNumPlayers,
+	getMaxNumPlayers: () => maxNumPlayers,
 
 	getGameSetupByNumPlayers: (numPlayers) => {
 		const setup = _.clone(SetupData[numPlayers]);
