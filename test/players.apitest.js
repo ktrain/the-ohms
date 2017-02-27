@@ -9,7 +9,7 @@ const PlayerHelper = require('./helpers/player.helper.js');
 const app = require('src/app');
 
 
-describe('/players', () => {
+describe('/players API', () => {
 
 	const basePath = '/v1/players';
 

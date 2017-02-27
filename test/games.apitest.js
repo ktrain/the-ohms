@@ -10,7 +10,7 @@ const GameHelper = require('./helpers/game.helper.js');
 const app = require('src/app');
 
 
-describe('/games', () => {
+describe('/games API', () => {
 
 	const basePath = '/v1/games';
 
