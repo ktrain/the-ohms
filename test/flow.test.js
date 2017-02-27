@@ -252,7 +252,9 @@ describe('Game Flow', () => {
 	});
 
 
-	describe('State transitions', () => {
+	describe('State transitions', function() {
+
+		this.slow(700);
 
 		it('`waiting for players` => `selecting team`', () => {
 			return ActionService.startGame(game.id, game.players[0].id)

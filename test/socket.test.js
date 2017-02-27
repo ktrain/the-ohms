@@ -13,18 +13,19 @@ const SocketIOClient = require('socket.io-client');
 
 const PlayerHelper = require('./helpers/player.helper.js');
 const GameHelper = require('./helpers/game.helper.js');
-const Events = require('src/events.js');
 const GameSetup = require('src/data/game.setup.js');
+const GameService = require('src/services/game.service.js');
+const GameDB = require('src/data/game.data.js');
 
 const port = testing.config.get('port');
 
 
-describe.skip('WebSocket server', function() {
+describe('WebSockets', function() {
 	this.slow(1500);
 
-	const players = [];
+	const clients = [];
+	let players;
 	let game;
-	let clients;
 	let socketUrl;
 	let gameSetup;
 
@@ -53,21 +54,37 @@ describe.skip('WebSocket server', function() {
 	before('Create players', () => {
 		return Promise.all(
 			_.times(10, (i) => {
-				return PlayerHelper.createPlayer()
-					.then((p) => {
-						players[i] = p;
-					});
+				return PlayerHelper.createPlayer();
 			})
 		)
-			.then(() => {
-				 gameSetup = GameSetup.getGameSetupByNumPlayers(players.length);
+			.then((ps) => {
+				players = ps;
+				gameSetup = GameSetup.getGameSetupByNumPlayers(players.length);
 			});
 	});
 
 	before('Connect clients', () => {
-		clients = _.map(players, (player, i) => {
-			return SocketIOClient(socketUrl, { query: `playerId=${player.id}&gameId=${game.id}` });
+		const cs = {};
+		_.each(players, (player, i) => {
+			cs[player.id] = SocketIOClient(socketUrl, { query: `playerId=${player.id}&gameId=${game.id}` });
 		});
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				GameService.getGame(game.id)
+					.then((g) => {
+						game = g;
+						_.each(game.players, (player, i) => {
+							clients[i] = cs[player.id];
+						});
+						resolve();
+					});
+			}, 500);
+		});
+	});
+
+	beforeEach('Refresh game data', () => {
+		return GameService.getGame(game.id)
+			.then((g) => { game = g; });
 	});
 
 	afterEach('Clear client bindings', () => {
@@ -96,6 +113,11 @@ describe.skip('WebSocket server', function() {
 				}
 			});
 		});
+		// trigger a save
+		GameService.getGame(game.id)
+			.then((g) => {
+				return GameDB.save(g);
+			});
 	});
 
 	it('`startGame` should populate game data', (done) => {

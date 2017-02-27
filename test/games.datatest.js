@@ -24,7 +24,9 @@ describe('GameDB', () => {
 
 });
 
-describe('Game Service', () => {
+describe('Game Service', function() {
+
+	this.slow(200);
 
 	let players;
 	let game;
