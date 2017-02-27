@@ -215,15 +215,9 @@ describe('Action Service', () => {
 		});
 
 		it('rejects action from player not on the team', () => {
-			const playerNotOnTeam = _.reduce(game.players, (selectedPlayer, player) => {
-				if (selectedPlayer) {
-					return selectedPlayer;
-				}
-				if (!LogicService.gameTeamHasPlayerId(game, player.id)) {
-					return player;
-				}
-				return null;
-			}, null);
+			const playerNotOnTeam = _.find(game.players, (player) => {
+				return !LogicService.gameTeamHasPlayerId(game, player.id);
+			});
 			const action = ActionHelper.getRandomBoolean();
 			return ActionService.submitMissionAction(game.id, playerNotOnTeam.id, action)
 				.should.be.rejectedWith(/not on the mission team/);
