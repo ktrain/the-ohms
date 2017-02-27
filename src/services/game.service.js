@@ -1,8 +1,13 @@
 'use strict';
 
+const _ = require('lodash');
 const logger = require('src/util/logger.js')('gameService');
+
+const EventEmitter = require('src/util/eventEmitter.js');
+const GameSetup = require('src/data/game.setup.js');
 const GameDB = require('src/data/game.data.js');
 const PlayerService = require('src/services/player.service.js');
+const LogicService = require('src/services/logic.service.js');
 
 const GameService = {
 
@@ -18,51 +23,67 @@ const GameService = {
 		return GameDB.getAll();
 	},
 
-	addPlayerToGame: (playerId, gameId) => {
+	deleteGame: (gameId) => {
+		return GameDB.destroy(gameId);
+	},
+
+	addPlayerToGame: (gameId, playerId) => {
 		return PlayerService.getPlayer(playerId).then((player) => {
 			if (!player) {
-				throw new Error(`Player does not exist (ID ${playerId})`);
+				throw new Error(`Player ${playerId} does not exist`);
 			}
-			return GameDB.addPlayer(gameId, player).then((game) => {
-				return PlayerService.markPlayerInGame(player, gameId).then(() => {
-					return game;
-				});
+			if (player.gameId && player.gameId !== gameId) {
+				throw new Error(`Player is already in another game ${player.gameId}`);
+			}
+
+			return GameDB.doUnderLock(gameId, (game) => {
+				if (game.state !== 'waiting for players') {
+					throw new Error('Players cannot leave a game once it has started');
+				}
+
+				const playerIndex = LogicService.getPlayerIndex(game, playerId);
+				if (playerIndex >= 0) {
+					// player is already in this game
+					return GameDB.save(game);
+				}
+
+				if (game.state !== 'waiting for players') {
+					throw new Error(`Game ${gameId} has already started`);
+				}
+
+				if (game.players.length >= GameSetup.getMaxNumPlayers()) {
+					throw new Error(`Game ${gameId} is full`);
+				}
+
+				game.players.push(player);
+				logger.debug('PLAYER ADDED');
+
+				return GameDB.save(game);
+			})
+			.then((game) => {
+				EventEmitter.emit('game|playerJoin', game, playerId);
+				return game;
 			});
 		});
 	},
 
 	removePlayerFromGame: (gameId, playerId) => {
-		let game;
 		logger.debug(`Removing player ${playerId} from game ${gameId}`);
-		return GameDB.removePlayer(gameId, playerId)
-			.then((g) => {
-				game = g;
-				return PlayerService.getPlayer(playerId);
-			})
-			.then((player) => {
-				if (player) {
-					return PlayerService.markPlayerNoGame(player);
-				}
-			})
-			.then(() => {
-				return game;
+		return GameDB.doUnderLock(gameId, (game) => {
+			game.players = _.filter(game.players, (player) => {
+				return player.id !== playerId;
 			});
-	},
 
-	deleteGame: (gameId) => {
-		return GameDB.destroy(gameId);
-	},
-
-	checkGameHasPlayerId: (game, playerId) => {
-		return GameDB.hasPlayer(game, playerId);
-	},
-
-	startGame: (playerId) => {
-		return PlayerService.getPlayer(playerId).then((player) => {
-			if (!player.gameId) {
-				throw new Error(`Player ${player.id} is not in a game.`);
+			if (game.players.length === 0) {
+				logger.debug('game is empty; destroying', gameId);
+				return GameDB.destroy(gameId);
 			}
-			return GameDB.startGame(player.gameId);
+
+			return GameDB.save(game);
+		})
+		.then((game) => {
+			EventEmitter.emit('game|playerLeave', game, playerId);
+			return game;
 		});
 	},
 

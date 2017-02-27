@@ -21,21 +21,6 @@ const events = require('src/events');
 
 events.setUpSubscriptions();
 
-// log http requests
-app.use((req, res, next) => {
-	logger.debug('---------------------------');
-	logger.debug(req.method, req.path);
-
-	if (req.params) {
-		logger.debug('req params', req.params);
-	}
-	if (req.query) {
-		logger.debug('req query', req.query);
-	}
-
-	next();
-});
-
 // start the http server
 const port = process.env.PORT || 8000;
 const httpServer = app.listen(port, () => {

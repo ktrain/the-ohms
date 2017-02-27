@@ -34,7 +34,7 @@
       {
         "vars": "all",
         "args": "none",
-        "varsIgnorePattern": "config|_"
+        "varsIgnorePattern": "config|_|logger"
       }
     ],
     "semi": [

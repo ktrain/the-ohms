@@ -82,10 +82,15 @@ const Actions = {
 	},
 
 	openGameConnection: (url, query) => {
-		Messenger.connect(url, query, (event) => {
-			console.log('clientUpdate', event);
-			dispatch('GAME_STATE', event.payload);
-		});
+		Messenger.connect(url, query,
+			(event) => {
+				console.log('clientUpdate', event);
+				dispatch('GAME_STATE', event.payload);
+			},
+			(err) => {
+				console.error('Messenger Error:', err);
+			}
+		);
 	},
 
 	leaveGame: () => {

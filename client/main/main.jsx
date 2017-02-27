@@ -7,6 +7,7 @@ const Headtags = require('vitreum/headtags');
 // data
 const Store = require('data/store');
 const Actions = require('data/actions');
+const GameModel = require('data/game.model');
 
 // pages
 const NameAgent = require('main/nameAgent/nameAgent.jsx');
@@ -65,7 +66,7 @@ const Main = React.createClass({
 			case 'Menu':
 				return <Menu playerName={_.get(this.props.player, 'name')} games={this.props.games} />;
 			case 'Game':
-				return <Game state={this.props.gameState} />;
+				return <Game game={GameModel(this.props.gameState)} />;
 			default:
 				return this.renderLoading();
 		}

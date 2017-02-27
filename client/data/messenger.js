@@ -8,9 +8,10 @@ let client;
 
 const Messenger = {
 
-	connect: (url, query, handler) => {
+	connect: (url, query, handler, errorHandler) => {
 		console.log('messenger connecting');
 		client = socketClient(url, query);
+		client.on('error', errorHandler);
 		client.on('clientUpdate', handler);
 		return Messenger;
 	},

@@ -1,162 +1,34 @@
 'use strict';
 
+const _ = require('lodash');
+const config = require('nconf');
+
+const SetupData = config.get('gameSetup');
+
+// parse the number keys (they have to be strings in JSON)
+const numberizedKeys = _.map(_.keys(SetupData), (key) => parseInt(key));
+const minNumPlayers = _.min(numberizedKeys);
+const maxNumPlayers = _.max(numberizedKeys);
+
+
 const GameSetup = {
-	getMinNumPlayers: () => { return 5; },
-	getMaxNumPlayers: () => { return 10; },
+
+	getMinNumPlayers: () => minNumPlayers,
+	getMaxNumPlayers: () => maxNumPlayers,
+
 	getGameSetupByNumPlayers: (numPlayers) => {
-		return {
-			5: {
-				numSpies: 2,
-				rounds: [
-					{
-						teamSize: 2,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 3,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 2,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 3,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 3,
-						numFailsRequired: 1,
-					},
-				],
-			},
-			6: {
-				numSpies: 2,
-				rounds: [
-					{
-						teamSize: 2,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 3,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 4,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 3,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 4,
-						numFailsRequired: 1,
-					},
-				],
-			},
-			7: {
-				numSpies: 3,
-				rounds: [
-					{
-						teamSize: 2,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 3,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 3,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 4,
-						numFailsRequired: 2,
-					},
-					{
-						teamSize: 4,
-						numFailsRequired: 1,
-					},
-				],
-			},
-			8: {
-				numSpies: 3,
-				rounds: [
-					{
-						teamSize: 3,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 4,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 4,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 5,
-						numFailsRequired: 2,
-					},
-					{
-						teamSize: 5,
-						numFailsRequired: 1,
-					},
-				],
-			},
-			9: {
-				numSpies: 3,
-				rounds: [
-					{
-						teamSize: 3,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 4,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 4,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 5,
-						numFailsRequired: 2,
-					},
-					{
-						teamSize: 5,
-						numFailsRequired: 1,
-					},
-				],
-			},
-			10: {
-				numSpies: 4,
-				rounds: [
-					{
-						teamSize: 3,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 4,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 4,
-						numFailsRequired: 1,
-					},
-					{
-						teamSize: 5,
-						numFailsRequired: 2,
-					},
-					{
-						teamSize: 5,
-						numFailsRequired: 1,
-					},
-				],
-			},
-		}[numPlayers];
+		const setup = _.cloneDeep(SetupData[numPlayers]);
+		setup.rounds = _.map(setup.rounds, (round) => {
+			return _.assign(round, {
+				team: [],
+				votes: {},
+				mission: {},
+				numRejections: 0,
+			});
+		});
+		return setup;
 	},
+
 };
 
 module.exports = GameSetup;

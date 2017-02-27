@@ -13,10 +13,18 @@ const PlayerDB = {
 		return `player-${id}`;
 	},
 
+	getKeyPattern: () => {
+		return 'player-*';
+	},
+
 	prepareNewData: (data) => {
-		const newData = _.clone(data);
-		newData.id = uuid.v4();
+		const newData = _.cloneDeep(data);
+		newData.id = data.id || uuid.v4();
 		return _.pick(newData, ['id', 'name']);
+	},
+
+	build: (data) => {
+		return PlayerDB.prepareNewData(data);
 	},
 
 	create: (data) => {

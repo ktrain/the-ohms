@@ -40,7 +40,7 @@ const Handler = {
 		})
 		.then(() => {
 			logger.debug('Adding player connection to game', game.id);
-			return GameService.addPlayerToGame(playerId, game.id);
+			return GameService.addPlayerToGame(game.id, playerId);
 		})
 		.catch((err) => {
 			if (game && game.players.length === 0) {
@@ -69,7 +69,7 @@ const Handler = {
 			message.playerId = playerId;
 			message.gameId = gameId;
 			logger.debug('incoming message:', message);
-			Handler.handleMessage(message)
+			Handler.handleIncomingMessage(message)
 				.catch((err) => {
 					logger.error(err);
 					socket.emit('messageError', err);
@@ -77,37 +77,8 @@ const Handler = {
 		});
 	},
 
-	handleMessage: (message) => {
-		return new Promise((resolve, reject) => {
-			if (!message.type) {
-				return reject(new Error(`Incoming message has no type: ${JSON.stringify(message)}`));
-			}
-
-			if (!message.playerId) {
-				return reject(new Error(`Incoming message has no playerId: ${JSON.stringify(message)}`));
-			}
-
-			switch (message.type) {
-				case 'leaveGame':
-					return GameHandler.leaveGame(message);
-				case 'kickPlayer':
-					return GameHandler.kickPlayer(message);
-				case 'startGame':
-					return GameHandler.startGame(message);
-				case 'selectTeam':
-					return GameHandler.selectTeam(message);
-				case 'approveTeam':
-					return GameHandler.approveTeam(message);
-				case 'rejectTeam':
-					return GameHandler.rejectTeam(message);
-				case 'succeedMisson':
-					return GameHandler.succeedMission(message);
-				case 'failMission':
-					return GameHandler.failMission(message);
-			}
-
-			return reject(new Error(`Incoming message has unknown type: ${JSON.stringify(message)}`));
-		});
+	handleIncomingMessage: (message) => {
+		return GameHandler.handleMessage(message);
 	},
 
 };

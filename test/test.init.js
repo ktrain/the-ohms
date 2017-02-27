@@ -14,8 +14,15 @@ const config = require('nconf')
 	.file('environment', { file: `${configPath}/${process.env.NODE_ENV}.json` })
 	.file('defaults', { file: `${configPath}/default.json` });
 
+// set up event subscriptions
+const Events = require('src/events.js');
+Events.setUpSubscriptions();
+
 // other libs
-const should = require('chai').use(require('chai-as-promised')).should();
+const should = require('chai')
+	.use(require('chai-as-promised'))
+	.use(require('chai-shallow-deep-equal'))
+	.should();
 
 const Cache = require('src/util/cache.js');
 

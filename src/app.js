@@ -23,18 +23,22 @@ if (config.get('redirectToSSL')) {
 	});
 }
 
-app.use((req, res, next) => {
-	let data = {};
-	if (!_.isEmpty(req.query)) {
-		data.query = JSON.stringify(req.query, null, '  ');
-	}
-	if (!_.isEmpty(req.body)) {
-		data.body = JSON.stringify(req.body, null, '  ');
-	}
-	data = _.isEmpty(data) ? '' : data;
-	logger.debug(req.method, req.path, data);
-	next();
-});
+if (config.get('NODE_ENV') !== 'production') {
+	app.use((req, res, next) => {
+		let data = {};
+		if (!_.isEmpty(req.query)) {
+			data.query = JSON.stringify(req.query, null, '  ');
+		}
+		if (!_.isEmpty(req.body)) {
+			data.body = JSON.stringify(req.body, null, '  ');
+		}
+		data = _.isEmpty(data) ? '' : data;
+		logger.debug('--------------------------------');
+		logger.debug(req.method, req.path, data);
+
+		next();
+	});
+}
 
 app.use('/', clientRoutes);
 
