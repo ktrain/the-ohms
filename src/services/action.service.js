@@ -87,7 +87,7 @@ const ActionService = {
 				throw new Error('A team can only be approved when the game is in `voting on team` state');
 			}
 
-			if (_.get(game.rounds[game.roundIndex], `votes.${playerId}`)) {
+			if (game.rounds[game.roundIndex].votes.hasOwnProperty(playerId)) {
 				throw new Error(`Player ${playerId} has already voted on this team`);
 			}
 

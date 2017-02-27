@@ -176,7 +176,7 @@ describe('Action Service', () => {
 		});
 
 		it('rejects vote from a player who has already voted', () => {
-			const player =game.players[_.random(0, players.length-1)];
+			const player = game.players[_.random(0, players.length-1)];
 			const vote = ActionHelper.getRandomBoolean();
 			return ActionService.submitTeamVote(game.id, player.id, vote)
 				.then(() => {
