@@ -17,7 +17,9 @@ const ActionService = require('src/services/action.service.js');
 const LogicService = require('src/services/logic.service.js');
 
 
-describe('Action Service', () => {
+describe('Action Service', function() {
+
+	this.slow(200);
 
 	const numPlayers = 10;
 
@@ -98,7 +100,7 @@ describe('Action Service', () => {
 				.then((g) => {
 					game = g;
 					currentRound = game.rounds[game.roundIndex];
-					leader =game.players[currentRound.leaderIndex];
+					leader = game.players[currentRound.leaderIndex];
 				});
 		});
 
@@ -185,8 +187,18 @@ describe('Action Service', () => {
 				.should.be.rejectedWith(/already voted/);
 		});
 
-		it.skip('can only be used during `voting on team` state', () => {
-			// it's a pain to write
+		it('can only be used during `voting on team` state', () => {
+			const player = game.players[_.random(0, players.length-1)];
+			return Promise.all(
+				_.map(players, (player) => {
+					return ActionService.submitTeamVoteApprove(game.id, player.id);
+				})
+			)
+				.then(() => {
+					const vote = ActionHelper.getRandomBoolean();
+					return ActionService.submitTeamVote(game.id, player.id, vote)
+						.should.be.rejectedWith(/`voting on team` state/);
+				});
 		});
 
 	});
@@ -209,10 +221,6 @@ describe('Action Service', () => {
 				});
 		});
 
-
-		it.skip('can only be used during `executing mission` state', () => {
-			// it's a pain to write
-		});
 
 		it('rejects action from player not on the team', () => {
 			const playerNotOnTeam = _.find(game.players, (player) => {
@@ -241,6 +249,36 @@ describe('Action Service', () => {
 				.then(() => {
 					return ActionService.submitMissionAction(game.id, playerOnTeamId, !action)
 						.should.be.rejectedWith(/already acted/);
+				});
+		});
+
+		it('can only be used during `executing mission` state', () => {
+			const currentRound = game.rounds[game.roundIndex];
+			// run the mission and pick a new team
+			return Promise.all(
+				_.map(currentRound.team, (playerId) => {
+					return ActionService.submitMissionSucceed(game.id, playerId);
+				})
+			)
+				.then(() => {
+					return GameService.getGame(game.id);
+				})
+				.then((g) => {
+					game = g;
+					const currentRound = game.rounds[game.roundIndex];
+					const leader = game.players[currentRound.leaderIndex];
+					return ActionService.selectTeam(game.id, leader.id, ActionHelper.getRandomTeam(game));
+				})
+				.then(() => {
+					return GameService.getGame(game.id);
+				})
+				.then((g) => {
+					game = g;
+					const currentRound = game.rounds[game.roundIndex];
+					const playerOnTeamId = currentRound.team[0];
+					const action = ActionHelper.getRandomBoolean();
+					return ActionService.submitMissionAction(game.id, playerOnTeamId, action)
+						.should.be.rejectedWith(/`executing mission` state/);
 				});
 		});
 
