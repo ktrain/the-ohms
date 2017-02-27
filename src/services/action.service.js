@@ -50,8 +50,9 @@ const ActionService = {
 		return GameDB.doUnderLock(gameId, (game) => {
 			const currentRound = game.rounds[game.roundIndex];
 			const leaderIndex = currentRound.leaderIndex;
-			if (game.players[leaderIndex].id !== playerId) {
-				throw new Error('Only the round leader can select a team');
+			const leader = game.players[leaderIndex];
+			if (leader.id !== playerId) {
+				throw new Error(`Player ${playerId} is not the round leader`);
 			}
 
 			if (game.state !== 'selecting team') {
@@ -86,6 +87,10 @@ const ActionService = {
 				throw new Error('A team can only be approved when the game is in `voting on team` state');
 			}
 
+			if (_.get(game.rounds[game.roundIndex], `votes.${playerId}`)) {
+				throw new Error(`Player ${playerId} has already voted on this team`);
+			}
+
 			const newGameState = LogicService.submitTeamVote(game, playerId, vote);
 
 			return GameDB.save(newGameState);
@@ -103,11 +108,15 @@ const ActionService = {
 	submitMissionAction: (gameId, playerId, action) => {
 		return GameDB.doUnderLock(gameId, (game) => {
 			if (!LogicService.gameTeamHasPlayerId(game, playerId)) {
-				throw new Error('Only players on the mission team can submit a mission action');
+				throw new Error(`Player ${playerId} is not on the mission team`);
 			}
 
 			if (game.state !== 'executing mission') {
 				throw new Error('A mission action can only be submitted when the game is in `executing mission` state');
+			}
+
+			if (game.rounds[game.roundIndex].mission.hasOwnProperty(playerId)) {
+				throw new Error(`Player ${playerId} has already acted on this mission`);
 			}
 
 			const newGameState = LogicService.submitMissionAction(game, playerId, action);
@@ -117,11 +126,11 @@ const ActionService = {
 	},
 
 	submitMissionSucceed: (gameId, playerId) => {
-		return ActionService.submitMissionAction(true);
+		return ActionService.submitMissionAction(gameId, playerId, true);
 	},
 
 	submitMissionFail: (gameId, playerId) => {
-		return ActionService.submitMissionAction(false);
+		return ActionService.submitMissionAction(gameId, playerId, false);
 	},
 
 };

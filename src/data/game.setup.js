@@ -17,10 +17,9 @@ const GameSetup = {
 	getMaxNumPlayers: () => maxNumPlayers,
 
 	getGameSetupByNumPlayers: (numPlayers) => {
-		const setup = _.clone(SetupData[numPlayers]);
-		_.each(setup.rounds, (round) => {
-			round = _.assign(round, {
-				leaderIndex: null,
+		const setup = _.cloneDeep(SetupData[numPlayers]);
+		setup.rounds = _.map(setup.rounds, (round) => {
+			return _.assign(round, {
 				team: [],
 				votes: {},
 				mission: {},

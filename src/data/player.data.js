@@ -18,7 +18,7 @@ const PlayerDB = {
 	},
 
 	prepareNewData: (data) => {
-		const newData = _.clone(data);
+		const newData = _.cloneDeep(data);
 		newData.id = data.id || uuid.v4();
 		return _.pick(newData, ['id', 'name']);
 	},

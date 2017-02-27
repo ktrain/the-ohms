@@ -17,7 +17,11 @@ const LogicService = {
 	},
 
 	gameTeamHasPlayerId: (game, playerId) => {
-		return !!_.find(game.rounds[game.roundIndex].team, playerId);
+		return _.includes(game.rounds[game.roundIndex].team, playerId);
+	},
+
+	getNextLeaderIndex: (game) => {
+		return (game.rounds[game.roundIndex].leaderIndex + 1) % game.players.length;
 	},
 
 
@@ -41,10 +45,10 @@ const LogicService = {
 	},
 
 	selectTeam: (g, team) => {
-		const game = _.clone(g);
+		const game = _.cloneDeep(g);
 
 		game.state = 'voting on team';
-		game.rounds[game.roundIndex].team = _.clone(team);
+		game.rounds[game.roundIndex].team = _.cloneDeep(team);
 
 		return game;
 	},
@@ -52,7 +56,7 @@ const LogicService = {
 	submitTeamVote: (g, playerId, vote) => {
 		let game = _.cloneDeep(g);
 
-		game.rounds[game.roundIndex].votes[playerId] = !!vote;
+		game.rounds[game.roundIndex].votes[playerId] = vote;
 
 		game = LogicService.tallyTeamVotes(game);
 
@@ -60,7 +64,7 @@ const LogicService = {
 	},
 
 	tallyTeamVotes: (g) => {
-		const game = g.cloneDeep();
+		const game = _.cloneDeep(g);
 
 		const currentRound = game.rounds[game.roundIndex];
 		const voteValues = _.values(currentRound.votes);
@@ -74,7 +78,7 @@ const LogicService = {
 		const votes = _.groupBy(voteValues);
 		logger.debug('voting complete', votes);
 
-		if (votes[true].length > votes[false].length) {
+		if (!votes[false] || (!!votes[true] && votes[true].length > votes[false].length)) {
 			// team approved
 			game.state = 'executing mission';
 		} else {
@@ -84,7 +88,8 @@ const LogicService = {
 			if (currentRound.numRejections >= 5) {
 				game.state = 'spies win';
 			} else {
-				currentRound.leaderIndex = (currentRound.leaderIndex + 1) % game.players.length;
+				currentRound.votes = {};
+				currentRound.leaderIndex = LogicService.getNextLeaderIndex(game);
 				game.state = 'selecting team';
 			}
 		}
@@ -95,14 +100,14 @@ const LogicService = {
 	submitMissionAction: (g, playerId, action) => {
 		let game = _.cloneDeep(g);
 
-		game.rounds[game.roundIndex].mission[playerId] = !!action;
+		game.rounds[game.roundIndex].mission[playerId] = action;
 		game = LogicService.tallyMissionActions(game);
 
 		return game;
 	},
 
 	tallyMissionActions: (g) => {
-		let game = g.cloneDeep();
+		let game = _.cloneDeep(g);
 
 		const currentRound = game.rounds[game.roundIndex];
 		const missionValues = _.values(currentRound.mission);
@@ -116,7 +121,7 @@ const LogicService = {
 		const mission = _.groupBy(missionValues);
 		logger.debug('mission complete', mission);
 
-		if (mission[false].length < currentRound.numFailsRequired) {
+		if (!mission[false] || mission[false].length < currentRound.numFailsRequired) {
 			game.numSuccesses++;
 		} else {
 			game.numFails++;
@@ -126,8 +131,11 @@ const LogicService = {
 
 		// check whether the game is over
 		if (game.state === 'executing mission') {
+			// prepare for the next round
 			game.state = 'selecting team';
+			const newLeaderIndex = LogicService.getNextLeaderIndex(game);
 			game.roundIndex++;
+			game.rounds[game.roundIndex].leaderIndex = newLeaderIndex;
 		}
 
 		return game;

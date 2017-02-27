@@ -19,7 +19,7 @@ const GameSetup = require('src/data/game.setup.js');
 const port = testing.config.get('port');
 
 
-describe('WebSocket server', function() {
+describe.skip('WebSocket server', function() {
 	this.slow(1500);
 
 	const players = [];
