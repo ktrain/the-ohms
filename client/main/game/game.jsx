@@ -15,17 +15,13 @@ const Game = React.createClass({
 
 	getDefaultProps: function() {
 		return {
-			player: null,
 			game: null,
 		};
 	},
 
-	componentDidMount: function() {
+	componentWillReceiveProps: function() {
 		if (!this.props.game) {
 			Actions.setPageState('Menu');
-		}
-		if (!this.props.player) {
-			Actions.setPageState('NameAgent');
 		}
 	},
 

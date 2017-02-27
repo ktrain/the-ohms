@@ -37,10 +37,6 @@ const GameService = {
 			}
 
 			return GameDB.doUnderLock(gameId, (game) => {
-				if (game.state !== 'waiting for players') {
-					throw new Error('Players cannot leave a game once it has started');
-				}
-
 				const playerIndex = LogicService.getPlayerIndex(game, playerId);
 				if (playerIndex >= 0) {
 					// player is already in this game

@@ -35,7 +35,7 @@ const Lobby = React.createClass({
 
 	renderPlayerRight: function(playerId) {
 		const game = this.props.game;
-		const leader = game.getLeaderId();
+		const leader = game.getLeader();
 
 		if (playerId === game.playerId) {
 			return <div className="right ready">You</div>
