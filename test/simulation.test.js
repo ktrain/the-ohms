@@ -19,7 +19,7 @@ const LogicService = require('src/services/logic.service.js');
 
 describe('Simultaneous game simulations', function() {
 
-	const numGamesToSimulate = 100;
+	const numGamesToSimulate = 50;
 
 	this.slow(numGamesToSimulate * 80);
 	this.timeout(numGamesToSimulate * 100);
