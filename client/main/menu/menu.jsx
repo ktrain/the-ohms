@@ -1,6 +1,7 @@
 'use strict';
 
 const React = require('react');
+const cx = require('classnames');
 const _ = require('lodash');
 
 // data
@@ -13,6 +14,12 @@ const Menu = React.createClass({
 		return {
 			playerName: '',
 			games: [],
+		};
+	},
+
+	getInitialState: function() {
+		return {
+			refreshing: false,
 		};
 	},
 
@@ -37,7 +44,12 @@ const Menu = React.createClass({
 
 	handleRefreshClick: function(evt) {
 		evt.preventDefault();
-		Actions.getGames();
+		this.setState({ refreshing: true }, () => {
+			Actions.getGames()
+				.then(() => {
+					this.setState({ refreshing: false });
+				});
+		});
 	},
 
 	renderGameList: function() {
@@ -78,13 +90,18 @@ const Menu = React.createClass({
 				</div>
 				<div className="joinMessage">or join an existing game:</div>
 				<div className="refresh">
-					<a onClick={this.handleRefreshClick}><i className="fa fa-refresh" /></a>
+					<a onClick={this.handleRefreshClick}>
+						<i className={cx("fa fa-refresh", { "fa-spin": this.state.refreshing })} />
+					</a>
 				</div>
 				<div className="games">
 					{this.renderGameList()}
 				</div>
 				<div className="refresh">
-					<button onClick={this.handleRefreshClick}>Refresh</button>
+					<button disabled={this.state.refreshing} onClick={this.handleRefreshClick}>
+						<i className={cx("fa fa-refresh", { "fa-spin": this.state.refreshing })} />
+						Refresh
+					</button>
 				</div>
 
 				<footer><a href="https://github.com/ktrain/the-ohms">The code</a></footer>
