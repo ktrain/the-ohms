@@ -6,6 +6,7 @@ const logger = require('src/util/logger.js')('actions');
 const GameDB = require('src/data/game.data.js');
 const GameSetup = require('src/data/game.setup.js');
 const GameService = require('src/services/game.service.js');
+const LogicService = require('src/services/logic.service.js');
 
 const ActionService = {
 
@@ -39,16 +40,9 @@ const ActionService = {
 				throw new Error(`Cannot start game ${gameId} without at least ${GameSetup.getMinNumPlayers()} players`);
 			}
 
-			game.state = 'selecting team';
+			const newGameState = LogicService.startGame(game);
 
-			const setup = GameSetup.getGameSetupByNumPlayers(game.players.length);
-			game.spyIndices = _.sampleSize(_.range(0, game.players.length), setup.numSpies);
-			game.spyIndices.sort();
-			game.rounds = setup.rounds;
-			game.roundIndex = 0;
-			game.rounds[game.roundIndex].leaderIndex = _.random(0, game.players.length-1);
-
-			return GameDB.save(game);
+			return GameDB.save(newGameState);
 		});
 	},
 
@@ -70,22 +64,21 @@ const ActionService = {
 			}
 
 			_.each(team, (playerId) => {
-				const playerIndex = GameService.getPlayerIndex(game, playerId);
+				const playerIndex = LogicService.getPlayerIndex(game, playerId);
 				if (playerIndex < 0) {
 					throw new Error(`Invalid team: player ${playerId} is not in the game`);
 				}
 			});
 
-			currentRound.team = team;
-			game.state = 'voting on team';
+			const newGameState = LogicService.selectTeam(game, team);
 
-			return GameDB.save(game);
+			return GameDB.save(newGameState);
 		});
 	},
 
 	submitTeamVote: (gameId, playerId, vote) => {
 		return GameDB.doUnderLock(gameId, (game) => {
-			if (!GameService.gameHasPlayerId(game, playerId)) {
+			if (!LogicService.gameHasPlayerId(game, playerId)) {
 				throw new Error(`Player ${playerId} is not in game {gameId}`);
 			}
 
@@ -93,10 +86,9 @@ const ActionService = {
 				throw new Error('A team can only be approved when the game is in `voting on team` state');
 			}
 
-			game.rounds[game.roundIndex].votes[playerId] = !!vote;
-			GameService.tallyTeamVotes(game);
+			const newGameState = LogicService.submitTeamVote(game, playerId, vote);
 
-			return GameDB.save(game);
+			return GameDB.save(newGameState);
 		});
 	},
 
@@ -110,7 +102,7 @@ const ActionService = {
 
 	submitMissionAction: (gameId, playerId, action) => {
 		return GameDB.doUnderLock(gameId, (game) => {
-			if (!GameService.gameTeamHasPlayerId(game, playerId)) {
+			if (!LogicService.gameTeamHasPlayerId(game, playerId)) {
 				throw new Error('Only players on the mission team can submit a mission action');
 			}
 
@@ -118,10 +110,9 @@ const ActionService = {
 				throw new Error('A mission action can only be submitted when the game is in `executing mission` state');
 			}
 
-			game.rounds[game.roundIndex].mission[playerId] = !!action;
-			GameService.tallyMissionActions(game);
+			const newGameState = LogicService.submitMissionAction(game, playerId, action);
 
-			return GameDB.save(game);
+			return GameDB.save(newGameState);
 		});
 	},
 

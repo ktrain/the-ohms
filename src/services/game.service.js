@@ -7,6 +7,7 @@ const EventEmitter = require('src/util/eventEmitter.js');
 const GameSetup = require('src/data/game.setup.js');
 const GameDB = require('src/data/game.data.js');
 const PlayerService = require('src/services/player.service.js');
+const LogicService = require('src/services/logic.service.js');
 
 const GameService = {
 
@@ -26,18 +27,6 @@ const GameService = {
 		return GameDB.destroy(gameId);
 	},
 
-	getPlayerIndex: (game, playerId) => {
-		return _.findIndex(game.players, (player) => { return playerId === player.id; });
-	},
-
-	gameHasPlayerId: (game, playerId) => {
-		return (GameService.getPlayerIndex(game, playerId) >= 0);
-	},
-
-	gameTeamHasPlayerId: (game, playerId) => {
-		return !!_.find(game.rounds[game.roundIndex].team, playerId);
-	},
-
 	addPlayerToGame: (gameId, playerId) => {
 		return PlayerService.getPlayer(playerId).then((player) => {
 			if (!player) {
@@ -52,7 +41,7 @@ const GameService = {
 					throw new Error('Players cannot leave a game once it has started');
 				}
 
-				const playerIndex = GameService.getPlayerIndex(game, playerId);
+				const playerIndex = LogicService.getPlayerIndex(game, playerId);
 				if (playerIndex >= 0) {
 					// player is already in this game
 					return GameDB.save(game);
@@ -96,82 +85,6 @@ const GameService = {
 			EventEmitter.emit('game|playerLeave', game, playerId);
 			return game;
 		});
-	},
-
-	// mutates game and returns it
-	tallyTeamVotes: (game) => {
-		const currentRound = game.rounds[game.roundIndex];
-		const voteValues = _.values(currentRound.votes);
-
-		if (voteValues.length < game.players.length) {
-			// voting is incomplete
-			return game;
-		}
-
-		// group votes by value
-		const votes = _.groupBy(voteValues);
-		logger.debug('voting complete', votes);
-
-		if (votes[true].length > votes[false].length) {
-			// team approved
-			game.state = 'executing mission';
-		} else {
-			// team rejected
-			// reset the round and increment the number of rejections
-			currentRound.numRejections++;
-			if (currentRound.numRejections >= 5) {
-				game.state = 'spies win';
-			} else {
-				currentRound.leaderIndex = (currentRound.leaderIndex + 1) % game.players.length;
-				game.state = 'selecting team';
-			}
-		}
-
-		return game;
-	},
-
-	// mutates game and returns it
-	tallyMissionActions: (game) => {
-		const currentRound = game.rounds[game.roundIndex];
-		const missionValues = _.values(currentRound.mission);
-
-		if (missionValues.length < currentRound.team.length) {
-			// mission is incomplete
-			return game;
-		}
-
-		// group mission actions by value
-		const mission = _.groupBy(missionValues);
-		logger.debug('mission complete', mission);
-
-		if (mission[false].length < currentRound.numFailsRequired) {
-			game.numSuccesses++;
-		} else {
-			game.numFails++;
-		}
-
-		GameService.tallyRoundResults(game);
-
-		// check whether the game is over
-		if (game.state === 'executing mission') {
-			game.state = 'selecting team';
-			game.roundIndex++;
-		}
-
-		return game;
-	},
-
-	// mutates game and returns it
-	tallyRoundResults: (game) => {
-		if (game.numSuccesses >= 3) {
-			// ohms win
-			game.state = 'ohms win';
-		} else if (game.numFails >= 3) {
-			// spies win
-			game.state = 'spies win';
-		}
-
-		return game;
 	},
 
 };

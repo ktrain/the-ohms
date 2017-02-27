@@ -44,6 +44,9 @@ const GameHandler = {
 	},
 
 	kickPlayer: (message) => {
+		if (!_.get(message, 'payload.playerId')) {
+			return Promise.reject(new Error('`kickPlayer` message requires `payload.playerId` (string)'));
+		}
 		return ActionService.kickPlayerFromGame(message.gameId, message.playerId, message.payload.playerId);
 	},
 
