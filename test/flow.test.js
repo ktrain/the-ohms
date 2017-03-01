@@ -23,7 +23,7 @@ describe('Game flow', () => {
 	let players;
 	let game;
 	let stranger;
-	let setup = GameSetup.getGameSetupByNumPlayers(numPlayers);
+	let setup = GameSetup.getDataByNumPlayers(numPlayers);
 
 	beforeEach('Create players', () => {
 		return Promise.all(_.times(numPlayers, () => PlayerHelper.createPlayer()))
@@ -71,7 +71,7 @@ describe('Game flow', () => {
 				.then((g) => {
 					g.should.have.property('state').that.equals('selecting team');
 
-					const setup = GameSetup.getGameSetupByNumPlayers(game.players.length);
+					const setup = GameSetup.getDataByNumPlayers(game.players.length);
 
 					g.should.have.property('rounds');
 					g.should.have.property('roundIndex').that.equals(0);

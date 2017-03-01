@@ -59,7 +59,7 @@ describe('WebSockets', function() {
 		)
 			.then((ps) => {
 				players = ps;
-				gameSetup = GameSetup.getGameSetupByNumPlayers(players.length);
+				gameSetup = GameSetup.getDataByNumPlayers(players.length);
 			});
 	});
 

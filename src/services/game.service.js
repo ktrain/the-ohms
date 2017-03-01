@@ -83,6 +83,10 @@ const GameService = {
 		});
 	},
 
+	getGameSetupData: () => {
+		return GameSetup.getData();
+	},
+
 };
 
 module.exports = GameService;
