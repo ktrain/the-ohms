@@ -24,7 +24,7 @@ const GameModel = function(gameState, playerId) {
 		},
 
 		amLeader: () => {
-			return playerId === game.getLeader();
+			return playerId === game.getLeader().id;
 		},
 
 		getData: () => {
