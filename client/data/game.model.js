@@ -27,6 +27,17 @@ const GameModel = function(gameState, playerId) {
 			return playerId === game.getLeader().id;
 		},
 
+		getPlayer: (playerId) => {
+			return _.find(game.players, (player) => {
+				return playerId === player.id;
+			});
+		},
+
+		getVote: () => {
+			const path = `votes['${playerId}']`;
+			return _.get(game.getCurrentRound(), path, null);
+		},
+
 		getData: () => {
 			return gameState;
 		},
