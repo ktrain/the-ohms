@@ -9,23 +9,22 @@ const Store = require('data/store');
 // components
 const Lobby = require('./lobby/lobby.jsx');
 const SelectTeam = require('./selectTeam/selectTeam.jsx');
+const VoteTeam = require('./voteTeam/voteTeam.jsx');
+const ExecuteMission = require('./executeMission/executeMission.jsx');
+const GameOver = require('./gameOver/gameOver.jsx');
 
 
 const Game = React.createClass({
 
 	getDefaultProps: function() {
 		return {
-			player: null,
 			game: null,
 		};
 	},
 
-	componentDidMount: function() {
+	componentWillReceiveProps: function() {
 		if (!this.props.game) {
 			Actions.setPageState('Menu');
-		}
-		if (!this.props.player) {
-			Actions.setPageState('NameAgent');
 		}
 	},
 
@@ -35,6 +34,13 @@ const Game = React.createClass({
 				return <Lobby {...this.props} />;
 			case 'selecting team':
 				return <SelectTeam {...this.props} />;
+			case 'voting on team':
+				return <VoteTeam {...this.props} />;
+			case 'executing mission':
+				return <ExecuteMission {...this.props} />;
+			case 'ohms win':
+			case 'spies win':
+				return <GameOver {...this.props} />;
 			default:
 				throw new Error(`Invalid game state: ${this.props.game.state}`);
 		}
@@ -44,6 +50,7 @@ const Game = React.createClass({
 		console.log('game props', this.props);
 		return (
 			<div className="game page">
+				<div className="title">{this.props.game.name}</div>
 				{this.renderStage()}
 			</div>
 		);

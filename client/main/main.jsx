@@ -30,6 +30,7 @@ const Main = React.createClass({
 		if (!this.props.player) {
 			return Actions.setPageState('NameAgent');
 		}
+		// check that the player data is up-to-date
 		Actions.getPlayer(this.props.player.id)
 			.then((player) => {
 				console.log('fetched player');
@@ -66,7 +67,7 @@ const Main = React.createClass({
 			case 'Menu':
 				return <Menu playerName={_.get(this.props.player, 'name')} games={this.props.games} />;
 			case 'Game':
-				return <Game game={GameModel(this.props.gameState)} />;
+				return <Game game={GameModel(this.props.gameState, this.props.player.id)} />;
 			default:
 				return this.renderLoading();
 		}

@@ -16,9 +16,13 @@ const GameSetup = {
 	getMinNumPlayers: () => minNumPlayers,
 	getMaxNumPlayers: () => maxNumPlayers,
 
-	getGameSetupByNumPlayers: (numPlayers) => {
-		const setup = _.cloneDeep(SetupData[numPlayers]);
-		setup.rounds = _.map(setup.rounds, (round) => {
+	getData: () => {
+		return _.cloneDeep(SetupData);
+	},
+
+	getDataByNumPlayers: (numPlayers) => {
+		const data = GameSetup.getData()[numPlayers];
+		data.rounds = _.map(data.rounds, (round) => {
 			return _.assign(round, {
 				team: [],
 				votes: {},
@@ -26,7 +30,7 @@ const GameSetup = {
 				numRejections: 0,
 			});
 		});
-		return setup;
+		return data;
 	},
 
 };

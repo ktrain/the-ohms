@@ -26,7 +26,7 @@ describe('Action Service', function() {
 	let players;
 	let game;
 	let stranger;
-	let setup = GameSetup.getGameSetupByNumPlayers(numPlayers);
+	let setup = GameSetup.getDataByNumPlayers(numPlayers);
 
 	beforeEach('Create players', () => {
 		return Promise.all(_.times(numPlayers, () => PlayerHelper.createPlayer()))

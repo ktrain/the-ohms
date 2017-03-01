@@ -34,7 +34,7 @@ const LogicService = {
 
 		game.state = 'selecting team';
 
-		const setup = GameSetup.getGameSetupByNumPlayers(game.players.length);
+		const setup = GameSetup.getDataByNumPlayers(game.players.length);
 		game.spyIndices = _.sampleSize(_.range(0, game.players.length), setup.numSpies);
 		game.spyIndices.sort();
 		game.rounds = setup.rounds;
