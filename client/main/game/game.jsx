@@ -50,7 +50,6 @@ const Game = React.createClass({
 		console.log('game props', this.props);
 		return (
 			<div className="game page">
-				<div className="title">{this.props.game.name}</div>
 				{this.renderStage()}
 			</div>
 		);
