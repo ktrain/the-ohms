@@ -59,14 +59,8 @@ const VoteTeam = React.createClass({
 		const vote = this.props.game.getVote();
 		const selection = this.state.selection;
 		console.log(selection, vote);
-		const rejectButtonClasses = cx("reject", {
-			selected: selection === false,
-			disabled: vote !== null,
-		});
-		const approveButtonClasses = cx("approve", {
-			selected: selection === true,
-			disabled: vote !== null,
-		});
+		const rejectButtonClasses = cx("reject", { selected: selection === false });
+		const approveButtonClasses = cx("approve", { selected: selection === true });
 
 		return (
 			<div className="votingButtons">
