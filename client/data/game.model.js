@@ -28,7 +28,6 @@ const GameModel = function(gameState, playerId) {
 		},
 
 		amOnTeam: () => {
-			console.log(game.getCurrentRound().team, playerId);
 			return _.includes(game.getCurrentRound().team, playerId);
 		},
 

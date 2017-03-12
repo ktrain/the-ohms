@@ -3,13 +3,15 @@
 const socketClient = require('socket.io-client');
 const _ = require('lodash');
 
+const Logger = require('data/logger');
+
 let client;
 
 
 const Messenger = {
 
 	connect: (url, query, handler, errorHandler) => {
-		console.log('messenger connecting');
+		Logger.info('Messenger connecting');
 		client = socketClient(url, query);
 		client.on('error', errorHandler);
 		client.on('clientUpdate', handler);
@@ -18,7 +20,7 @@ const Messenger = {
 
 	send: (type, payload) => {
 		const message = _.assign({ type, payload }, { version: 1 });
-		console.log('sending', message);
+		Logger.debug('sending', message);
 		client.emit('message', message);
 		return Messenger;
 	},

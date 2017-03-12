@@ -5,6 +5,7 @@ const _ = require('lodash');
 const Meta = require('vitreum/meta');
 
 // data
+const Logger = require('data/logger');
 const Store = require('data/store');
 const Actions = require('data/actions');
 const GameModel = require('data/game.model');
@@ -33,12 +34,12 @@ const Main = React.createClass({
 		// check that the player data is up-to-date
 		Actions.getPlayer(this.props.player.id)
 			.then((player) => {
-				console.log('fetched player');
+				Logger.debug('fetched player');
 				if (player.gameId) {
-					console.log('player has game ID; connecting');
+					Logger.debug('player has game ID; connecting');
 					Actions.connectAndJoinGame(player.gameId);
 				} else {
-					console.log('no game; going to menu');
+					Logger.debug('no game; going to menu');
 					return Actions.setPageState('Menu');
 				}
 			})

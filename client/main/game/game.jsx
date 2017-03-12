@@ -47,7 +47,6 @@ const Game = React.createClass({
 	},
 
 	render: function() {
-		console.log('game props', this.props);
 		return (
 			<div className="game page">
 				{this.renderStage()}

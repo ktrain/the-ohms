@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 
-const logger = require('data/logger');
+const Logger = require('data/logger');
 
 
 const Storage = {
@@ -28,7 +28,7 @@ const Storage = {
 	put: (key, val) => {
 		const preppedVal = Storage.prepValue(val);
 		localStorage.setItem(key, preppedVal);
-		logger.debug('STORAGE:PUT', key, preppedVal);
+		Logger.debug('STORAGE:PUT', key, preppedVal);
 		return val;
 	},
 
@@ -38,7 +38,7 @@ const Storage = {
 		}
 		const val = localStorage.getItem(key);
 		const parsedVal = Storage.attemptJsonParse(val);
-		logger.debug('STORAGE:GET', key, parsedVal);
+		Logger.debug('STORAGE:GET', key, parsedVal);
 		return parsedVal;
 	},
 

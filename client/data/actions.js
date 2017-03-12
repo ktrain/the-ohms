@@ -4,6 +4,7 @@ const _ = require('lodash');
 const dispatch = require('pico-flux').dispatch;
 const request = require('data/request');
 
+const Logger = require('data/Logger');
 const Messenger = require('data/messenger');
 const Store = require('data/store');
 
@@ -30,7 +31,7 @@ const Actions = {
 				dispatch('PLAYER', res.body);
 			})
 			.catch((err) => {
-				console.error(err);
+				Logger.error(err);
 				throw new Error('Failed to activate agent.');
 			});
 	},
@@ -57,7 +58,7 @@ const Actions = {
 				dispatch('GAMES', games);
 			})
 			.catch((err) => {
-				console.error(err);
+				Logger.error(err);
 				throw new Error('Could not fetch list of games.');
 			});
 	},
@@ -84,11 +85,11 @@ const Actions = {
 	openGameConnection: (url, query) => {
 		Messenger.connect(url, query,
 			(event) => {
-				console.log('clientUpdate', event);
+				Logger.debug('clientUpdate', event);
 				dispatch('GAME_STATE', event.payload);
 			},
 			(err) => {
-				console.error('Messenger Error:', err);
+				Logger.error('Messenger Error:', err);
 			}
 		);
 	},

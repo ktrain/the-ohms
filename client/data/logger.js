@@ -1,6 +1,8 @@
 'use strict';
 
 const logger = require('loglevel');
-logger.setLevel('debug');
+if (typeof global.Config === 'object') {
+	logger.setLevel(global.Config.logLevel);
+}
 
 module.exports = logger;
