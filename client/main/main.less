@@ -40,6 +40,10 @@ button {
 	text-transform: uppercase;
 	padding: @fontSizeMedium/3;
 	width: 100%;
+	&:disabled {
+		color: darken(@textGrey, 50%);
+		border-color: darken(@textGrey, 50%);
+	}
 }
 
 ul {

@@ -52,7 +52,9 @@ const SelectTeam = React.createClass({
 				<ul>
 					{players}
 				</ul>
-				<button onClick={this.handleConfirmTeam}>Confirm Team</button>
+				<button
+					disabled={_.keys(this.state.team).length != this.props.game.getCurrentRound().teamSize}
+					onClick={this.handleConfirmTeam}>Confirm Team</button>
 			</div>
 		);
 	},
@@ -64,7 +66,6 @@ const SelectTeam = React.createClass({
 	render: function() {
 		let content = this.renderWaiting();
 		if (this.props.game.amLeader()) {
-			console.log(this.state.team);
 			content = this.renderTeamSelection();
 		}
 
