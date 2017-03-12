@@ -30,7 +30,7 @@ const GameHandler = {
 				return GameHandler.approveTeam(message);
 			case 'rejectTeam':
 				return GameHandler.rejectTeam(message);
-			case 'succeedMisson':
+			case 'succeedMission':
 				return GameHandler.succeedMission(message);
 			case 'failMission':
 				return GameHandler.failMission(message);
@@ -70,11 +70,11 @@ const GameHandler = {
 	},
 
 	succeedMission: (message) => {
-		return ActionService.succeedMission(message.gameId, message.playerId);
+		return ActionService.submitMissionSucceed(message.gameId, message.playerId);
 	},
 
 	failMission: (message) => {
-		return ActionService.failMission(message.gameId, message.playerId);
+		return ActionService.submitMissionFail(message.gameId, message.playerId);
 	},
 
 };
