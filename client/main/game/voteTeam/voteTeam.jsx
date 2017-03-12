@@ -18,7 +18,7 @@ const VoteTeam = React.createClass({
 
 	getInitialState: function() {
 		return {
-			vote: null,
+			selection: null,
 		};
 	},
 
@@ -57,7 +57,7 @@ const VoteTeam = React.createClass({
 
 	renderVotingButtons: function() {
 		const vote = this.props.game.getVote();
-		const selection = this.state.vote;
+		const selection = this.state.selection;
 		console.log(selection, vote);
 		const rejectButtonClasses = cx("reject", {
 			selected: selection === false,
@@ -74,7 +74,7 @@ const VoteTeam = React.createClass({
 					<button className={rejectButtonClasses} onClick={this.handleRejectClick}>Reject</button>
 					<button className={approveButtonClasses} onClick={this.handleApproveClick}>Approve</button>
 				</div>
-				<button disabled={this.state.vote === null}>Confirm</button>
+				<button onClick={this.handleSubmitClick} disabled={this.state.selection === null}>Confirm</button>
 			</div>
 		);
 	},
@@ -82,7 +82,7 @@ const VoteTeam = React.createClass({
 	renderPolls: function() {
 		return (
 			<div className="polls">
-				polls
+				Waiting for other players to vote
 			</div>
 		);
 	},
@@ -90,7 +90,6 @@ const VoteTeam = React.createClass({
 	renderVoting: function() {
 		let content;
 		const vote = this.props.game.getVote();
-		console.log('vote', vote);
 		if (vote === null) {
 			content = this.renderVotingButtons();
 		} else {
