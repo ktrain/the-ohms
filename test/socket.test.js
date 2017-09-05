@@ -8,7 +8,6 @@ const should = testing.should;
 
 const logger = require('src/util/logger.js')('test-socket');
 const express = require('express');
-const SocketIO = require('socket.io');
 const SocketIOClient = require('socket.io-client');
 
 const PlayerHelper = require('./helpers/player.helper.js');

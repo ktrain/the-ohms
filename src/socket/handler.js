@@ -31,23 +31,23 @@ const Handler = {
 					return g;
 				});
 		})
-		.then((g) => {
-			game = g;
-			return Promise.all([
-				Handler.bindOutgoingMessageHandler(socket, playerId),
-				Handler.bindIncomingMessageHandler(socket, playerId, game.id),
-			]);
-		})
-		.then(() => {
-			logger.debug('Adding player connection to game', game.id);
-			return GameService.addPlayerToGame(game.id, playerId);
-		})
-		.catch((err) => {
-			if (game && game.players.length === 0) {
-				GameService.deleteGame(game.id);
-			}
-			throw err;
-		});
+			.then((g) => {
+				game = g;
+				return Promise.all([
+					Handler.bindOutgoingMessageHandler(socket, playerId),
+					Handler.bindIncomingMessageHandler(socket, playerId, game.id),
+				]);
+			})
+			.then(() => {
+				logger.debug('Adding player connection to game', game.id);
+				return GameService.addPlayerToGame(game.id, playerId);
+			})
+			.catch((err) => {
+				if (game && game.players.length === 0) {
+					GameService.deleteGame(game.id);
+				}
+				throw err;
+			});
 	},
 
 	bindOutgoingMessageHandler: (socket, playerId) => {

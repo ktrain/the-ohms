@@ -56,10 +56,10 @@ const GameService = {
 
 				return GameDB.save(game);
 			})
-			.then((game) => {
-				EventEmitter.emit('game|playerJoin', game, playerId);
-				return game;
-			});
+				.then((game) => {
+					EventEmitter.emit('game|playerJoin', game, playerId);
+					return game;
+				});
 		});
 	},
 
@@ -77,10 +77,10 @@ const GameService = {
 
 			return GameDB.save(game);
 		})
-		.then((game) => {
-			EventEmitter.emit('game|playerLeave', game, playerId);
-			return game;
-		});
+			.then((game) => {
+				EventEmitter.emit('game|playerLeave', game, playerId);
+				return game;
+			});
 	},
 
 	getGameSetupData: () => {

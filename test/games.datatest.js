@@ -85,7 +85,7 @@ describe('Game Service', function() {
 		beforeEach('Add players to game', () => {
 			return Promise.all(
 				_.map(players, (player) => {
-					return GameService.addPlayerToGame(game.id, player.id)
+					return GameService.addPlayerToGame(game.id, player.id);
 				})
 			);
 		});

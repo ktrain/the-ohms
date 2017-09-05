@@ -48,7 +48,7 @@ describe('/games API', () => {
 						.expect(200)
 						.then((res) => {
 							res.body.should.have.property('count').that.equals(1);
-							res.body.should.have.property('list').that.is.an('array').with.length(res.body.count)
+							res.body.should.have.property('list').that.is.an('array').with.length(res.body.count);
 							res.body.list[0].should.be.an('object').with.property('id').that.is.a('string');
 						});
 				});

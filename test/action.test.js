@@ -6,7 +6,6 @@ const should = testing.should;
 
 const _ = require('lodash');
 
-const GameSetup = require('src/data/game.setup.js');
 const GameHelper = require('./helpers/game.helper.js');
 const PlayerHelper = require('./helpers/player.helper.js');
 const ActionHelper = require('./helpers/action.helper.js');
@@ -26,7 +25,6 @@ describe('Action Service', function() {
 	let players;
 	let game;
 	let stranger;
-	let setup = GameSetup.getDataByNumPlayers(numPlayers);
 
 	beforeEach('Create players', () => {
 		return Promise.all(_.times(numPlayers, () => PlayerHelper.createPlayer()))
@@ -49,7 +47,7 @@ describe('Action Service', function() {
 	beforeEach('Add players to game', () => {
 		return Promise.all(
 			_.map(players, (player) => {
-				return GameService.addPlayerToGame(game.id, player.id)
+				return GameService.addPlayerToGame(game.id, player.id);
 			})
 		)
 			.then(() => {
