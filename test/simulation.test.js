@@ -6,12 +6,10 @@ const should = testing.should;
 
 const _ = require('lodash');
 
-const GameSetup = require('src/data/game.setup.js');
 const GameHelper = require('./helpers/game.helper.js');
 const PlayerHelper = require('./helpers/player.helper.js');
 const ActionHelper = require('./helpers/action.helper.js');
 
-const GameDB = require('src/data/game.data.js');
 const GameService = require('src/services/game.service.js');
 const ActionService = require('src/services/action.service.js');
 const LogicService = require('src/services/logic.service.js');
@@ -66,7 +64,7 @@ describe('Simultaneous game simulations', function() {
 					game = g;
 					return Promise.all(
 						_.map(gamePlayers, (player) => {
-							return GameService.addPlayerToGame(game.id, player.id)
+							return GameService.addPlayerToGame(game.id, player.id);
 						})
 					);
 				})
@@ -97,10 +95,11 @@ describe('Simultaneous game simulations', function() {
 							let promise;
 
 							switch (game.state) {
-								case 'selecting team':
+								case 'selecting team': {
 									const team = ActionHelper.getRandomTeam(game);
 									promise = ActionService.selectTeam(game.id, leader.id, team);
 									break;
+								}
 								case 'voting on team':
 									promise = Promise.all(
 										_.map(game.players, (player) => {

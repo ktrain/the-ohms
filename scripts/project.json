@@ -7,7 +7,7 @@
 	"libs": [
 		"react",
 		"react-dom",
-		"vitreum/headtags",
+		"vitreum/meta",
 		"lodash",
 		"classnames",
 		"pico-flux",

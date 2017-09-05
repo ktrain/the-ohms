@@ -11,10 +11,8 @@ const GameHelper = require('./helpers/game.helper.js');
 const PlayerHelper = require('./helpers/player.helper.js');
 const ActionHelper = require('./helpers/action.helper.js');
 
-const GameDB = require('src/data/game.data.js');
 const GameService = require('src/services/game.service.js');
 const ActionService = require('src/services/action.service.js');
-const LogicService = require('src/services/logic.service.js');
 
 
 describe('Game flow', () => {
@@ -22,17 +20,11 @@ describe('Game flow', () => {
 	const numPlayers = 10;
 	let players;
 	let game;
-	let stranger;
-	let setup = GameSetup.getDataByNumPlayers(numPlayers);
 
 	beforeEach('Create players', () => {
 		return Promise.all(_.times(numPlayers, () => PlayerHelper.createPlayer()))
 			.then((ps) => {
 				players = ps;
-				return PlayerHelper.createPlayer();
-			})
-			.then((p) => {
-				stranger = p;
 			});
 	});
 
@@ -46,7 +38,7 @@ describe('Game flow', () => {
 	beforeEach('Add players to game', () => {
 		return Promise.all(
 			_.map(players, (player) => {
-				return GameService.addPlayerToGame(game.id, player.id)
+				return GameService.addPlayerToGame(game.id, player.id);
 			})
 		)
 			.then(() => {
@@ -98,7 +90,6 @@ describe('Game flow', () => {
 				})
 				.then((g) => {
 					game = g;
-					const currentRound = game.rounds[game.roundIndex];
 					game.should.have.property('state').that.equals('voting on team');
 					game.rounds[game.roundIndex].should.have.property('team').that.has.members(team);
 				});
@@ -128,9 +119,9 @@ describe('Game flow', () => {
 							return ActionService.submitTeamVoteReject(game.id, player.id);
 						})
 					)
-					.then(() => {
-						return GameService.getGame(game.id);
-					});
+						.then(() => {
+							return GameService.getGame(game.id);
+						});
 				})
 				.then((g) => {
 					game = g;
@@ -166,10 +157,10 @@ describe('Game flow', () => {
 											return ActionService.submitTeamVoteReject(game.id, player.id);
 										})
 									)
-									.then(() => {
-										// refresh game
-										return GameService.getGame(game.id);
-									});
+										.then(() => {
+											// refresh game
+											return GameService.getGame(game.id);
+										});
 								});
 						});
 					}, Promise.resolve(game));
@@ -199,10 +190,10 @@ describe('Game flow', () => {
 							return ActionService.submitTeamVoteApprove(game.id, player.id);
 						})
 					)
-					.then(() => {
-						// refresh game
-						return GameService.getGame(game.id);
-					});
+						.then(() => {
+							// refresh game
+							return GameService.getGame(game.id);
+						});
 				})
 				.then((g) => {
 					game = g;
@@ -239,9 +230,9 @@ describe('Game flow', () => {
 							return ActionService.submitMissionAction(game.id, playerId, action);
 						})
 					)
-					.then(() => {
-						return GameService.getGame(game.id);
-					});
+						.then(() => {
+							return GameService.getGame(game.id);
+						});
 				})
 				.then((g) => {
 					game = g;
@@ -278,24 +269,24 @@ describe('Game flow', () => {
 											return ActionService.submitTeamVoteApprove(game.id, player.id);
 										})
 									)
-									.then(() => {
-										// refresh game
-										return GameService.getGame(game.id);
-									})
-									.then((g) => {
-										game = g;
-										const currentRound = game.rounds[game.roundIndex];
-										// succeed
-										return Promise.all(
-											_.map(currentRound.team, (playerId) => {
-												return ActionService.submitMissionSucceed(game.id, playerId);
-											})
-										);
-									})
-									.then(() => {
-										// refresh game
-										return GameService.getGame(game.id);
-									});
+										.then(() => {
+											// refresh game
+											return GameService.getGame(game.id);
+										})
+										.then((g) => {
+											game = g;
+											const currentRound = game.rounds[game.roundIndex];
+											// succeed
+											return Promise.all(
+												_.map(currentRound.team, (playerId) => {
+													return ActionService.submitMissionSucceed(game.id, playerId);
+												})
+											);
+										})
+										.then(() => {
+											// refresh game
+											return GameService.getGame(game.id);
+										});
 								});
 						});
 					}, Promise.resolve(game));
@@ -329,24 +320,24 @@ describe('Game flow', () => {
 											return ActionService.submitTeamVoteApprove(game.id, player.id);
 										})
 									)
-									.then(() => {
-										// refresh game
-										return GameService.getGame(game.id);
-									})
-									.then((g) => {
-										game = g;
-										const currentRound = game.rounds[game.roundIndex];
-										// fail
-										return Promise.all(
-											_.map(currentRound.team, (playerId) => {
-												return ActionService.submitMissionFail(game.id, playerId);
-											})
-										);
-									})
-									.then(() => {
-										// refresh game
-										return GameService.getGame(game.id);
-									});
+										.then(() => {
+											// refresh game
+											return GameService.getGame(game.id);
+										})
+										.then((g) => {
+											game = g;
+											const currentRound = game.rounds[game.roundIndex];
+											// fail
+											return Promise.all(
+												_.map(currentRound.team, (playerId) => {
+													return ActionService.submitMissionFail(game.id, playerId);
+												})
+											);
+										})
+										.then(() => {
+											// refresh game
+											return GameService.getGame(game.id);
+										});
 								});
 						});
 					}, Promise.resolve(game));

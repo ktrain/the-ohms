@@ -14,10 +14,10 @@ router.get('/', (req, res) => {
 	render('main', templateFn, {
 		url: req.url,
 	})
-	.then((page) => {
-		return res.status(200).send(page);
-	})
-	.catch(logger.error);
+		.then((page) => {
+			return res.status(200).send(page);
+		})
+		.catch(logger.error);
 });
 
 module.exports = router;
