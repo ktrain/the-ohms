@@ -2,7 +2,6 @@
 
 const React = require('react');
 const _ = require('lodash');
-const Headtags = require('vitreum/headtags');
 
 // data
 const Store = require('data/store');

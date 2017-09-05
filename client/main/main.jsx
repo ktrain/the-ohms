@@ -2,7 +2,7 @@
 
 const React = require('react');
 const _ = require('lodash');
-const Headtags = require('vitreum/headtags');
+const Meta = require('vitreum/meta');
 
 // data
 const Store = require('data/store');
@@ -76,9 +76,9 @@ const Main = React.createClass({
 	render: function() {
 		return (
 			<main>
-				<Headtags.title>The Ohms</Headtags.title>
-				<Headtags.meta name="description" content="Can you resist?" />
-				<Headtags.meta name="viewport" content="width=device-width, initial-scale=1" />
+				<Meta name="The Ohms" />
+				<Meta name="description" content="Can you resist?" />
+				<Meta name="viewport" content="width=device-width, initial-scale=1" />
 
 				{this.renderPage()}
 			</main>
