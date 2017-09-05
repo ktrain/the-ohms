@@ -37,7 +37,7 @@
     "log4js": "^6.2.1",
     "loglevel": "^1.6.8",
     "nconf": "^0.10.0",
-    "pico-flux": "^2.3.0",
+    "pico-flux": "^2.3.1",
     "randomstring": "^1.1.5",
     "redlock": "^4.1.0",
     "socket.io": "^2.3.0",
