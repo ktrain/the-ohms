@@ -8,12 +8,7 @@
   },
   "scripts": {
     "test": "mocha test",
-    "lint": "./node_modules/.bin/eslint src client test",
-    "postinstall": "npm run build",
-    "build:prod": "NODE_ENV=production npm run build",
-    "build": "node scripts/build.js",
-    "start:dev": "node scripts/dev.js",
-    "start:clean": "npm run build && npm run start:dev",
+    "lint": "eslint src client test",
     "start": "node src/main.js"
   },
   "repository": {
@@ -26,10 +21,22 @@
     "url": "https://github.com/ktrain/the-ohms/issues"
   },
   "homepage": "https://github.com/ktrain/the-ohms",
+  "babel": {
+    "only": [
+      "*.jsx"
+    ],
+    "presets": [
+      "env",
+      "react"
+    ]
+  },
   "dependencies": {
     "app-module-path": "^2.1.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
     "body-parser": "^1.19.0",
     "classnames": "^2.2.6",
+    "create-react-class": "^15.6.3",
     "express": "^4.17.1",
     "human-readable-ids": "^1.0.4",
     "ioredis": "^4.16.3",
@@ -39,6 +46,8 @@
     "nconf": "^0.10.0",
     "pico-flux": "^2.3.1",
     "randomstring": "^1.1.5",
+    "react": "^16.1.1",
+    "react-dom": "^16.13.1",
     "redlock": "^4.1.0",
     "socket.io": "^2.3.0",
     "superagent": "^5.2.2",
