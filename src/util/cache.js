@@ -3,7 +3,7 @@
 const _	  = require('lodash');
 const config = require('nconf');
 const randomstring = require('randomstring');
-const redis = require('redis');
+const redis = require('ioredis');
 const Redlock = require('redlock');
 
 const logger = require('src/util/logger.js')('cache');
@@ -11,57 +11,64 @@ const logger = require('src/util/logger.js')('cache');
 const redisUrl = config.get('redis_url');
 const cacheConfig = config.get('cache');
 
-if (!redisUrl && !cacheConfig) {
-	throw new Error('Cache is not configured properly. '
-			+ 'Please check `config.cache`, or set `REDIS_URL` env var.');
-}
+let queryClient, subClient, lock;
 
-const createClient = () => {
-	let client;
-	if (redisUrl) {
-		client = redis.createClient(redisUrl);
-	} else {
-		if (!cacheConfig.password) {
-			delete cacheConfig.password;
-		}
-		client = redis.createClient(cacheConfig);
-	}
-	return client;
-};
-
-let queryClient = createClient();
-let subClient = queryClient.duplicate();
-
-const redisLock = new Redlock(
-	// one client per redis node
-	[queryClient],
-	{
-		driftFactor: config.get('cache:locking:driftFactor'),
-		retryCount: config.get('cache:locking:retryCount'),
-		retryDelay: config.get('cache:locking:retryDelay'),
-	}
-);
-
-redisLock.on('clientError', (err) => {
-	logger.err('LockError', err);
-});
-
-const attemptJsonParse = (jsonMaybe) => {
-	let val = jsonMaybe;
-	try {
-		val = JSON.parse(val);
-	} catch (err) {
-		// value is not JSON
-		// that's ok; just ignore the error and send back the value
-	}
-	return val;
-};
-
-const parseHash = (hash) => {
-	return _.map(_.values(hash), attemptJsonParse);
-};
 
 const Cache = {
+
+    init: (cacheLib=redis) => {
+
+        if (!redisUrl && !cacheConfig) {
+            throw new Error('Cache is not configured properly. '
+                    + 'Please check `config.cache`, or set `REDIS_URL` env var.');
+        }
+
+        queryClient = Cache.createClient(cacheLib);
+        subClient = queryClient;
+
+        lock = new Redlock(
+            // one client per redis node
+            [queryClient],
+            {
+                driftFactor: config.get('cache:locking:driftFactor'),
+                retryCount: config.get('cache:locking:retryCount'),
+                retryDelay: config.get('cache:locking:retryDelay'),
+            }
+        );
+
+        lock.on('clientError', (err) => {
+            logger.err('LockError', err);
+        });
+
+    },
+
+    createClient: (cacheLib) => {
+        let client;
+        if (redisUrl) {
+            client = new cacheLib(redisUrl);
+        } else {
+            if (!cacheConfig.password) {
+                delete cacheConfig.password;
+            }
+            client = new cacheLib(cacheConfig);
+        }
+        return client;
+    },
+
+    attemptJsonParse: (jsonMaybe) => {
+        let val = jsonMaybe;
+        try {
+            val = JSON.parse(val);
+        } catch (err) {
+            // value is not JSON
+            // that's ok; just ignore the error and send back the value
+        }
+        return val;
+    },
+
+    parseHash: (hash) => {
+        return _.map(_.values(hash), Cache.attemptJsonParse);
+    },
 
 	prepValue: (value) => {
 		let val = value;
@@ -107,7 +114,7 @@ const Cache = {
 					return reject(new Error(err));
 				}
 
-				resolve(attemptJsonParse(res));
+				resolve(Cache.attemptJsonParse(res));
 			});
 		});
 	},
@@ -122,7 +129,7 @@ const Cache = {
 				if (err) {
 					return reject(new Error(err));
 				}
-				resolve(attemptJsonParse(res));
+				resolve(Cache.attemptJsonParse(res));
 			});
 		});
 	},
@@ -133,7 +140,7 @@ const Cache = {
 				if (err) {
 					return reject(new Error(err));
 				}
-				resolve(attemptJsonParse(res));
+				resolve(Cache.attemptJsonParse(res));
 			});
 		});
 	},
@@ -171,7 +178,7 @@ const Cache = {
 					if (err) {
 						return reject(new Error(err));
 					}
-					resolve(attemptJsonParse(getResult));
+					resolve(Cache.attemptJsonParse(getResult));
 				});
 		});
 	},
@@ -185,7 +192,7 @@ const Cache = {
 					if (err) {
 						return reject(new Error(err));
 					}
-					resolve(parseHash(hash));
+					resolve(Cache.parseHash(hash));
 				});
 		});
 	},
@@ -196,7 +203,7 @@ const Cache = {
 
 	acquireLock: (key) => {
 		const lockKey = Cache.prepareLockKey(key);
-		return redisLock.lock(lockKey, config.get('cache:locking:lockTTLms'));
+		return lock.lock(lockKey, config.get('cache:locking:lockTTLms'));
 	},
 
 	keys: (pattern) => {
@@ -219,7 +226,7 @@ const Cache = {
 				if (err) {
 					return reject(new Error(err));
 				}
-				resolve(_.map(res, attemptJsonParse));
+				resolve(_.map(res, Cache.attemptJsonParse));
 			});
 		});
 	},
