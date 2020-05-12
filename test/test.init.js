@@ -25,8 +25,7 @@ const should = require('chai')
 	.should();
 
 const Cache = require('src/util/cache.js');
-
-Cache.init(require('ioredis-mock'))
+Cache.init()
 
 module.exports = {
 	config: config,
