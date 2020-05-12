@@ -23,6 +23,7 @@ describe('WebSockets', function() {
 	this.slow(1500);
 
 	const clients = [];
+	let httpServer;
 	let players;
 	let game;
 	let socketUrl;
@@ -32,10 +33,10 @@ describe('WebSockets', function() {
 		return testing.clearCache();
 	});
 
-	before('Create server', (done) => {
+	before('Create httpServer', (done) => {
 		const app = express();
 		const io = require('src/socket');
-		const httpServer = app.listen(port, () => {
+		httpServer = app.listen(port, () => {
 			io.attachToHttpServer(httpServer);
 			logger.info('Test server listening on ' + port);
 			socketUrl = `http://127.0.0.1:${port}`;
@@ -87,13 +88,19 @@ describe('WebSockets', function() {
 	});
 
 	afterEach('Clear client bindings', () => {
-		_.each(clients, (client) => {
-			client.removeAllListeners();
-		});
+		_.each(clients, (client) => client.removeAllListeners());
+	});
+
+	after('Disconnect clients', () => {
+		_.each(clients, (client) => client.disconnect());
 	});
 
 	after('Clear cache', () => {
 		return testing.clearCache();
+	});
+
+	after('Close server', (done) => {
+		httpServer.close(done);
 	});
 
 

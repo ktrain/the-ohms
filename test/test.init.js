@@ -25,7 +25,8 @@ const should = require('chai')
 	.should();
 
 const Cache = require('src/util/cache.js');
-Cache.init()
+Cache.init();
+after('Tear down Cache', Cache.deinit);
 
 module.exports = {
 	config: config,

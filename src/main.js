@@ -21,7 +21,7 @@ const events = require('src/events');
 
 events.setUpSubscriptions();
 
-require('src/util/cache').init()
+require('src/util/cache').init();
 
 // start the http server
 const port = process.env.PORT || 8000;

@@ -16,59 +16,63 @@ let queryClient, subClient, lock;
 
 const Cache = {
 
-    init: (cacheLib=redis) => {
+	init: (cacheLib=redis) => {
 
-        if (!redisUrl && !cacheConfig) {
-            throw new Error('Cache is not configured properly. '
-                    + 'Please check `config.cache`, or set `REDIS_URL` env var.');
-        }
+		if (!redisUrl && !cacheConfig) {
+			throw new Error('Cache is not configured properly. '
+					+ 'Please check `config.cache`, or set `REDIS_URL` env var.');
+		}
 
-        queryClient = Cache.createClient(cacheLib);
-        subClient = queryClient;
+		queryClient = Cache.createClient(cacheLib);
+		subClient = queryClient;
 
-        lock = new Redlock(
-            // one client per redis node
-            [queryClient],
-            {
-                driftFactor: config.get('cache:locking:driftFactor'),
-                retryCount: config.get('cache:locking:retryCount'),
-                retryDelay: config.get('cache:locking:retryDelay'),
-            }
-        );
+		lock = new Redlock(
+			// one client per redis node
+			[queryClient],
+			{
+				driftFactor: config.get('cache:locking:driftFactor'),
+				retryCount: config.get('cache:locking:retryCount'),
+				retryDelay: config.get('cache:locking:retryDelay'),
+			}
+		);
 
-        lock.on('clientError', (err) => {
-            logger.err('LockError', err);
-        });
+		lock.on('clientError', (err) => {
+			logger.err('LockError', err);
+		});
 
-    },
+	},
 
-    createClient: (cacheLib) => {
-        let client;
-        if (redisUrl) {
-            client = new cacheLib(redisUrl);
-        } else {
-            if (!cacheConfig.password) {
-                delete cacheConfig.password;
-            }
-            client = new cacheLib(cacheConfig);
-        }
-        return client;
-    },
+	deinit: () => {
+		queryClient.disconnect();
+	},
 
-    attemptJsonParse: (jsonMaybe) => {
-        let val = jsonMaybe;
-        try {
-            val = JSON.parse(val);
-        } catch (err) {
-            // value is not JSON
-            // that's ok; just ignore the error and send back the value
-        }
-        return val;
-    },
+	createClient: (cacheLib) => {
+		let client;
+		if (redisUrl) {
+			client = new cacheLib(redisUrl);
+		} else {
+			if (!cacheConfig.password) {
+				delete cacheConfig.password;
+			}
+			client = new cacheLib(cacheConfig);
+		}
+		return client;
+	},
 
-    parseHash: (hash) => {
-        return _.map(_.values(hash), Cache.attemptJsonParse);
-    },
+	attemptJsonParse: (jsonMaybe) => {
+		let val = jsonMaybe;
+		try {
+			val = JSON.parse(val);
+		} catch (err) {
+			// value is not JSON
+			// that's ok; just ignore the error and send back the value
+		}
+		return val;
+	},
+
+	parseHash: (hash) => {
+		return _.map(_.values(hash), Cache.attemptJsonParse);
+	},
 
 	prepValue: (value) => {
 		let val = value;
