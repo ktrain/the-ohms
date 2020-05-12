@@ -97,12 +97,13 @@ const GameDB = {
 					return game;
 				})
 				.then(doTheWork)
+				.then((res) => {
+					lock.unlock();
+					return res;
+                })
 				.catch((err) => {
 					lock.unlock();
 					throw err;
-				}).then((res) => {
-					lock.unlock();
-					return res;
 				});
 		});
 	},

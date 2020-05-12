@@ -24,7 +24,7 @@ const Cache = {
 		}
 
 		queryClient = Cache.createClient(cacheLib);
-		subClient = queryClient;
+		subClient = queryClient.duplicate();
 
 		lock = new Redlock(
 			// one client per redis node

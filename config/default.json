@@ -11,8 +11,9 @@
 		"locking": {
 			"driftFactor": 0.01,
 			"retryCount": 100,
-			"retryDelay": 11,
-			"lockTTLms": 20
+			"retryDelay": 15,
+			"retryJitter": 15,
+			"lockTTLms": 1000
 		}
 	},
 	"data": {
