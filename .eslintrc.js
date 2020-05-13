@@ -1,4 +1,4 @@
-{
+module.exports = {
   "env": {
     "es6": true,
     "node": true,
@@ -23,7 +23,7 @@
       "unix"
     ],
     "no-console": [
-      "off",
+      "off"
     ],
     "no-ex-assign": [
       "off"
