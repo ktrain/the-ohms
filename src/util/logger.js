@@ -8,6 +8,6 @@ module.exports = (name) => {
 	const logLevel = config.get('logging:forceLevel')
 			|| config.get(`log:${name}:level`)
 			|| config.get('logging:defaultLevel');
-	logger.setLevel(logLevel);
+	logger.level = logLevel;
 	return logger;
 };

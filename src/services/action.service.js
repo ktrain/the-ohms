@@ -87,7 +87,8 @@ const ActionService = {
 				throw new Error('A team can only be approved when the game is in `voting on team` state');
 			}
 
-			if (game.rounds[game.roundIndex].votes.hasOwnProperty(playerId)) {
+			const votes = game.rounds[game.roundIndex].votes;
+			if (Object.prototype.hasOwnProperty.call(votes, playerId)) {
 				throw new Error(`Player ${playerId} has already voted on this team`);
 			}
 
@@ -115,7 +116,8 @@ const ActionService = {
 				throw new Error('A mission action can only be submitted when the game is in `executing mission` state');
 			}
 
-			if (game.rounds[game.roundIndex].mission.hasOwnProperty(playerId)) {
+			const mission = game.rounds[game.roundIndex].mission;
+			if (Object.prototype.hasOwnProperty.call(mission, playerId)) {
 				throw new Error(`Player ${playerId} has already acted on this mission`);
 			}
 

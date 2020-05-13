@@ -11,7 +11,7 @@ const logger = require('src/util/logger.js')('cache');
 const redisUrl = config.get('redis_url');
 const cacheConfig = config.get('cache');
 
-let queryClient, subClient, lock;
+let queryClient, subClient, redlock;
 
 
 const Cache = {
@@ -24,9 +24,9 @@ const Cache = {
 		}
 
 		queryClient = Cache.createClient(cacheLib);
-		subClient = queryClient;
+		subClient = queryClient.duplicate();
 
-		lock = new Redlock(
+		redlock = new Redlock(
 			// one client per redis node
 			[queryClient],
 			{
@@ -36,14 +36,16 @@ const Cache = {
 			}
 		);
 
-		lock.on('clientError', (err) => {
+		redlock.on('clientError', (err) => {
 			logger.err('LockError', err);
 		});
 
 	},
 
-	deinit: () => {
+	deinit: async () => {
+		await redlock.quit();
 		queryClient.disconnect();
+		subClient.disconnect();
 	},
 
 	createClient: (cacheLib) => {
@@ -207,7 +209,7 @@ const Cache = {
 
 	acquireLock: (key) => {
 		const lockKey = Cache.prepareLockKey(key);
-		return lock.lock(lockKey, config.get('cache:locking:lockTTLms'));
+		return redlock.lock(lockKey, config.get('cache:locking:lockTTLms'));
 	},
 
 	keys: (pattern) => {
