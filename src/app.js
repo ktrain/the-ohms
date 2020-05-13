@@ -7,7 +7,7 @@ const config = require('nconf');
 
 const logger = require('src/util/logger.js')('routing');
 const routes = require('./routes.js');
-const clientRoutes = require('./client.js');
+//const clientRoutes = require('./client.js');
 
 const app = express();
 
@@ -40,7 +40,7 @@ if (config.get('NODE_ENV') !== 'production') {
 	});
 }
 
-app.use('/', clientRoutes);
+//app.use('/', clientRoutes);
 
 app.use(bodyParser.json());
 app.use('/v1', routes);

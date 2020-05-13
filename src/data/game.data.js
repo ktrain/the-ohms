@@ -2,7 +2,7 @@
 
 const _ = require('lodash');
 const uuid = require('uuid');
-const generateName = require('adjective-adjective-animal');
+const humanReadableId = require('human-readable-ids').hri;
 const config = require('nconf');
 
 const logger = require('src/util/logger.js')('game');
@@ -21,26 +21,19 @@ const GameDB = {
 	},
 
 	prepareNewData: () => {
-		return generateName({
-			adjectives: 1,
-			format: 'lower',
-		}).then((name) => {
-			return {
-				id: uuid.v4(),
-				name: name,
-				state: 'waiting for players',
-				players: [],
-				numSuccesses: 0,
-				numFails: 0,
-			};
-		});
+		return {
+			id: uuid.v4(),
+			name: humanReadableId.random(),
+			state: 'waiting for players',
+			players: [],
+			numSuccesses: 0,
+			numFails: 0,
+		};
 	},
 
 	create: () => {
-		return GameDB.build()
-			.then((game) => {
-				return GameDB.save(game);
-			});
+		const game = GameDB.build()
+		return GameDB.save(game);
 	},
 
 	build: () => {
@@ -100,7 +93,7 @@ const GameDB = {
 				.then((res) => {
 					lock.unlock();
 					return res;
-                })
+				})
 				.catch((err) => {
 					lock.unlock();
 					throw err;

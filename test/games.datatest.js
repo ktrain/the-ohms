@@ -15,11 +15,10 @@ const PlayerHelper = require('./helpers/player.helper.js');
 describe('GameDB', () => {
 
 	it('generates ID on build', () => {
-		return GameDB.build()
-			.then((gameData) => {
-				should.exist(gameData);
-				gameData.should.have.property('id').that.is.a('string');
-			});
+		const gameData = GameDB.build()
+		should.exist(gameData);
+		gameData.should.have.property('id').that.is.a('string');
+		gameData.should.have.property('name').that.is.a('string');
 	});
 
 });
