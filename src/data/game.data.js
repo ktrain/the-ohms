@@ -32,7 +32,7 @@ const GameDB = {
 	},
 
 	create: () => {
-		const game = GameDB.build()
+		const game = GameDB.build();
 		return GameDB.save(game);
 	},
 
