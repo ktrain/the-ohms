@@ -29,7 +29,7 @@
     "human-readable-ids": "^1.0.4",
     "ioredis": "^4.17.1",
     "lodash": "^4.17.15",
-    "log4js": "^6.2.1",
+    "log4js": "^6.4.0",
     "loglevel": "^1.6.8",
     "nconf": "^0.10.0",
     "pico-flux": "^2.3.0",
