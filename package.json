@@ -31,7 +31,7 @@
     "lodash": "^4.17.15",
     "log4js": "^6.2.1",
     "loglevel": "^1.6.8",
-    "nconf": "^0.10.0",
+    "nconf": "^0.11.4",
     "pico-flux": "^2.3.0",
     "randomstring": "^1.1.5",
     "redlock": "^4.1.0",
