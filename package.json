@@ -35,7 +35,7 @@
     "pico-flux": "^2.3.0",
     "randomstring": "^1.1.5",
     "redlock": "^4.1.0",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.5.0",
     "superagent": "^5.2.2",
     "superagent-promise": "^1.1.0",
     "uuid": "^8.1.0"
